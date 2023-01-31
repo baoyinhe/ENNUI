@@ -2,7 +2,7 @@
 
 import * as tf from "@tensorflow/tfjs";
 import { Rank, Tensor } from "@tensorflow/tfjs";
-import { Cifar10 } from "tfjs-cifar10-web";
+// import { Cifar10 } from "tfjs-cifar10-web";
 
 const NUM_DATASET_ELEMENTS = 65000;
 
@@ -21,7 +21,7 @@ export abstract class ImageData {
     public readonly IMAGE_HEIGHT: number;
     public readonly IMAGE_WIDTH: number;
     public readonly IMAGE_CHANNELS: number;
-    public readonly IMAGE_SIZE: number = this.IMAGE_HEIGHT * this.IMAGE_WIDTH * this.IMAGE_CHANNELS;
+    public readonly IMAGE_SIZE: number;
     public readonly NUM_CLASSES: number;
     public pythonName: string;
 
@@ -35,7 +35,7 @@ export abstract class ImageData {
     protected testLabels: Tensor<Rank>;
     protected datasetName: string;
 
-    public abstract async load(): Promise<void>;
+    public async load(): Promise<void> { };
 
     /**
      * Get all training data as a data tensor and a labels tensor.
@@ -121,48 +121,48 @@ export abstract class ImageData {
  * A class that fetches the sprited CIFAR dataset and provide data as
  * Tensors.
  */
-export class Cifar10Data extends ImageData {
+// export class Cifar10Data extends ImageData {
 
-    public static get Instance(): ImageData {
-        return this.instance || (this.instance = new this());
-    }
+//     public static get Instance(): ImageData {
+//         return this.instance || (this.instance = new this());
+//     }
 
-    private static instance: Cifar10Data;
-    public IMAGE_HEIGHT: number = 32;
-    public IMAGE_WIDTH: number = 32;
-    public IMAGE_CHANNELS: number = 3;
-    public IMAGE_SIZE: number = this.IMAGE_HEIGHT * this.IMAGE_WIDTH * this.IMAGE_CHANNELS;
-    public NUM_CLASSES: number = 10;
+//     private static instance: Cifar10Data;
+//     public IMAGE_HEIGHT: number = 32;
+//     public IMAGE_WIDTH: number = 32;
+//     public IMAGE_CHANNELS: number = 3;
+//     public IMAGE_SIZE: number = this.IMAGE_HEIGHT * this.IMAGE_WIDTH * this.IMAGE_CHANNELS;
+//     public NUM_CLASSES: number = 10;
 
-    public datasetName: string = "CIFAR-10";
-    public pythonName: string = "cifar10";
+//     public datasetName: string = "CIFAR-10";
+//     public pythonName: string = "cifar10";
 
-    public readonly classStrings: string[] =
-        ["Airplane", "Automobile", "Bird", "Cat", "Deer", "Dog", "Frog", "Horse", "Ship", "Truck"];
+//     public readonly classStrings: string[] =
+//         ["Airplane", "Automobile", "Bird", "Cat", "Deer", "Dog", "Frog", "Horse", "Ship", "Truck"];
 
-    public async load(): Promise<void> {
-        if (this.dataLoaded) {
-            return;
-        }
+//     public async load(): Promise<void> {
+//         if (this.dataLoaded) {
+//             return;
+//         }
 
-        this.toggleLoadingOverlay();
+//         this.toggleLoadingOverlay();
 
-        const data = new Cifar10();
-        await data.load();
+//         const data = new Cifar10();
+//         await data.load();
 
-        const {xs: trainX, ys: trainY} = data.nextTrainBatch(15000);
-        const {xs: testX, ys: testY} = data.nextTestBatch(1500);
-        this.trainImages = trainX as unknown as Tensor<Rank.R4>;
-        this.trainLabels = trainY as unknown as Tensor<Rank.R4>;
-        this.testImages = testX as unknown as Tensor<Rank.R2>;
-        this.testLabels = testY as unknown as Tensor<Rank.R2>;
+//         const {xs: trainX, ys: trainY} = data.nextTrainBatch(15000);
+//         const {xs: testX, ys: testY} = data.nextTestBatch(1500);
+//         this.trainImages = trainX as unknown as Tensor<Rank.R4>;
+//         this.trainLabels = trainY as unknown as Tensor<Rank.R4>;
+//         this.testImages = testX as unknown as Tensor<Rank.R2>;
+//         this.testLabels = testY as unknown as Tensor<Rank.R2>;
 
-        this.dataLoaded = true;
+//         this.dataLoaded = true;
 
-        document.getElementById("loadingDataTab").style.display = "none";
-    }
+//         document.getElementById("loadingDataTab").style.display = "none";
+//     }
 
-}
+// }
 
 /**
  * A class that fetches the sprited MNIST dataset and provide data as
@@ -262,7 +262,7 @@ export let dataset: ImageData = MnistData.Instance;
 export function changeDataset(newDataset: string): void {
     switch (newDataset) {
         case "mnist": dataset = MnistData.Instance; break;
-        case "cifar": dataset = Cifar10Data.Instance; break;
+        // case "cifar": dataset = Cifar10Data.Instance; break;
     }
 
     // Set the image visualizations divs with class name identifiers

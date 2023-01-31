@@ -27,6 +27,8 @@ import { TextBox } from "./shapes/textbox";
 import { WireGuide } from "./shapes/wireguide";
 import { copyTextToClipboard } from "./utils";
 import { windowProperties } from "./window";
+import { setupSerial } from './serial';
+
 
 export interface IDraggableData {
     draggable: Draggable[];
@@ -43,6 +45,7 @@ export let svgData: IDraggableData = {
 document.addEventListener("DOMContentLoaded", () => {
 
     // This function runs when the DOM is ready, i.e. when the document has been parsed
+    setupSerial();
     setupPlots();
     setupTestResults();
 
@@ -51,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const categoryElements = document.getElementsByClassName("categoryTitle") as HTMLCollectionOf<HTMLElement>;
     for (const elmt of categoryElements) {
-        makeCollapsable(elmt);
+        makeCollapsable(elmt);  // 使可折叠
     }
 
     window.addEventListener("resize", resizeMiddleSVG);
@@ -194,14 +197,14 @@ function setupIndividualOnClicks(): void {
 
     document.getElementById("train").addEventListener("click", trainOnClick);
 
-    document.getElementById("informationEducation").addEventListener("click", () => {
-        document.getElementById("informationOverlay").style.display = "none";
-        switchTab("education");
-    });
+    // document.getElementById("informationEducation").addEventListener("click", () => {
+    //     document.getElementById("informationOverlay").style.display = "none";
+    //     switchTab("education");
+    // });
 
-    document.getElementById("informationOverlay").addEventListener("click", () => {
-        document.getElementById("informationOverlay").style.display = "none";
-    });
+    // document.getElementById("informationOverlay").addEventListener("click", () => {
+    //     document.getElementById("informationOverlay").style.display = "none";
+    // });
 
     document.getElementById("x").addEventListener("click", () => clearError());
 
@@ -250,6 +253,10 @@ async function trainOnClick(): Promise<void> {
             trainingBox.children[1].innerHTML = "No";
         }
     }
+}
+
+function dataCollectionClick(): void {
+    document.getElementById("paramshell").style.display = "none";
 }
 
 function resizeMiddleSVG(): void {
@@ -347,7 +354,9 @@ export function setModelHyperparameters(): void {
 }
 
 export function tabSelected(): string {
-    if (document.getElementById("networkTab").style.display !== "none") {
+    if (document.getElementById("datacollectionTab").style.display !== "none") {
+        return "datacollectionTab";
+    } else if (document.getElementById("networkTab").style.display !== "none") {
         return "networkTab";
     } else if (document.getElementById("progressTab").style.display !== "none") {
         return "progressTab";
@@ -361,25 +370,29 @@ export function tabSelected(): string {
 }
 
 function switchTab(tabType: string): void {
-    // Hide all tabs
+    // Hide all tabs  (middle canvas)
+    document.getElementById("datacollectionTab").style.display = "none";
     document.getElementById("networkTab").style.display = "none";
     document.getElementById("progressTab").style.display = "none";
     document.getElementById("visualizationTab").style.display = "none";
     document.getElementById("educationTab").style.display = "none";
 
     // Hide all menus
+    document.getElementById("datacollectionMenu").style.display = "none";
     document.getElementById("networkMenu").style.display = "none";
     document.getElementById("progressMenu").style.display = "none";
     document.getElementById("visualizationMenu").style.display = "none";
     document.getElementById("educationMenu").style.display = "none";
 
     // Hide all paramshells
+    document.getElementById("datacollectionParamshell").style.display = "none";
     document.getElementById("networkParamshell").style.display = "none";
     document.getElementById("progressParamshell").style.display = "none";
     document.getElementById("visualizationParamshell").style.display = "none";
     document.getElementById("educationParamshell").style.display = "none";
 
     // Unselect all tabs
+    document.getElementById("datacollection").classList.remove("tab-selected");
     document.getElementById("network").classList.remove("tab-selected");
     document.getElementById("progress").classList.remove("tab-selected");
     document.getElementById("visualization").classList.remove("tab-selected");
@@ -395,6 +408,7 @@ function switchTab(tabType: string): void {
     // document.getElementById("menu_expander").style.display = null;
 
     switch (tabType) {
+        case "datacollection": dataCollectionClick(); break; // TODO
         case "network": resizeMiddleSVG(); break;
         case "progress": setupPlots(); break;
         case "visualization": showPredictions(); break;
@@ -411,7 +425,7 @@ function switchTab(tabType: string): void {
             .remove("bottom_neighbor_tab-selected");
     }
 
-    const tabMapping = ["blanktab", "network", "progress", "visualization",
+    const tabMapping = ["blanktab", "datacollection", "network", "progress", "visualization",
         "middleblanktab", "education", "bottomblanktab"];
     const index = tabMapping.indexOf(tabType);
 

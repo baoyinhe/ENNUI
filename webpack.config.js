@@ -3,7 +3,8 @@ module.exports = {
     output: {
       filename: "bundle.js"
     },
-    target: 'web',
+    target: 'electron-renderer',
+    // target: 'web',
     // type: 'javascript/auto',
     // test: /\.(json)$/,
     // exclude: /node_modules/,
@@ -20,7 +21,7 @@ module.exports = {
     externals: {
       // '@tensorflow/tfjs': '@tensorflow/tfjs',
       // '@tensorflow/tfjs-node': '@tensorflow/tfjs-node',
-      'canvas': 'canvas'
+      serialport: "commonjs2 serialport",
     },
     module: {
       rules: [

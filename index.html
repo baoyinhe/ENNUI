@@ -5,6 +5,21 @@
 	<meta name="description" content="Welcome to ENNUI - An elegant neural network user interface which allows you to easily design, train, and visualize neural networks.">
 	<title>ENNUI ~ Elegant Neural Network User Interface ~</title>
 
+	<style>
+	#terminal {
+      height: 90vh;
+    }
+    .options {
+      padding: 0.75em;
+    }
+    #connect {
+      margin-right: 2em;
+    }
+    label.checkbox {
+      margin-right: 1em;
+    }
+	</style>
+
 	<!-- MathJax cdn to render latex -->
 	<script type="text/javascript" async
 		src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
@@ -67,7 +82,10 @@
 
 	<!-- The leftmost strip to select tabs -->
 	<div id = 'tabselector'>
-		<div id = 'blanktab' class='top_neighbor_tab-selected'> </div>
+		<div id = 'blanktab'> </div>
+		<div title = 'DataCollection' class = 'option tab-option top_neighbor_tab-selected' id = 'datacollection' data-optionValue = 'datacollection'>
+			<svg class = 'icon' xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16zm0-11.47L17.74 9 12 13.47 6.26 9 12 4.53z"/></svg>
+		</div>
 		<div title = 'Network' class = 'tab-selected option tab-option' id = 'network' data-optionValue = 'network'>
 			<svg class = 'icon' xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16zm0-11.47L17.74 9 12 13.47 6.26 9 12 4.53z"/></svg>
 		</div>
@@ -87,6 +105,37 @@
 
 	<!-- The left panel (menu) -->
 	<div id = 'menu'>
+		<div id = 'datacollectionMenu' style="display: none">
+			<!-- // TODO -->
+			<div class="options">
+				<label for="ports">端口:</label>
+				<select id="ports">
+				  <option value="prompt">点击'连接'添加端口...</option>
+				</select>
+				<button id="connect">连接</button>
+			  
+				<button id="download">下载输出</button>
+				<button id="clear">清空输出</button>
+			  
+				<br>
+			  
+				<label for="baudrate">波特率:</label>
+				<select id="baudrate">
+				  <option value="9600">9600</option>
+				  <option value="14400">14400</option>
+				  <option value="19200">19220</option>
+				  <option value="28800">28800</option>
+				  <option value="38400">38400</option>
+				  <option value="57600">57600</option>
+				  <option value="115200" selected>115200</option>
+				  <option value="230400">230400</option>
+				  <option value="460800">460800</option>
+				  <option value="921600">921600</option>
+				  <option value="custom">Custom</option>
+				</select>
+			</div>
+		</div>
+
 		<div id = 'networkMenu'>
 			<div id = 'layers' class = 'category'>
 				<div class = 'categoryTitle' data-expanded = 'true'>
@@ -96,7 +145,7 @@
 						</svg>
 					</div>
 					<div class='categoryTitleText'>
-						Layers
+						神经网络层
 					</div>
 
 				</div>
@@ -131,7 +180,7 @@
 						</svg>
 					</div>
 					<div class='categoryTitleText'>
-						Activations
+						激活函数
 					</div>
 				</div>
 				<div class = 'option select-option' data-optionValue = 'relu'> ReLU </div>
@@ -146,7 +195,7 @@
 						</svg>
 					</div>
 					<div class='categoryTitleText'>
-						Templates
+						模板
 					</div>
 				</div>
 				<div class = 'option select-option' data-optionValue = 'blank'> Blank </div>
@@ -164,7 +213,7 @@
 						</svg>
 					</div>
 					<div class='categoryTitleText'>
-						Optimizers
+						优化器
 					</div>
 				</div>
 				<div id = "defaultOptimizer" class = 'option select-option selected' id = 'sgd' data-optionValue = 'sgd'> SGD </div>
@@ -180,7 +229,7 @@
 						</svg>
 					</div>
 					<div class='categoryTitleText'>
-						Losses
+						损失函数
 					</div>
 				</div>
 				<div id = 'defaultLoss' class = 'option select-option selected' data-optionValue = 'categoricalCrossentropy'>CrossEntropy</div>
@@ -260,6 +309,10 @@
 
 	<!-- The middle canvas -->
 	<div id = 'middle'>
+		<div id = 'datacollectionTab' style="display: none">
+			<!-- TODO -->
+			<div id="terminal"></div>
+		</div>
 
 		<div id = 'networkTab'>
 			<svg id = 'svg'> </svg>
@@ -279,7 +332,7 @@
 			<div id='images'></div>
 		</div>
 
-		<div id = 'informationOverlay'>
+		<!-- <div id = 'informationOverlay'>
 			<div id='information'>Welcome to ENNUI
 				<div id="informationBody">~ an elegant neural network user interface ~</div>
 				<div class="informationRow">
@@ -301,7 +354,7 @@
 					Open-sourced on <a class="overlayLinks" href="https://github.com/martinjm97/ENNUI" target="_blank">GitHub</a>.
 				</div>
 			</div>
-		</div>
+		</div> -->
 
 		<div id = 'educationTab' style="display: none">
 			<div id="educationOverview">
@@ -526,6 +579,11 @@
 			<div id="exportJulia" class="select-option right-option">Export to Julia</div>
 			<div id="copyModel" class="select-option right-option">Copy model link</div>
 		</div>
+
+		<div id = 'datacollectionParamshell' style="display: none">
+			<!-- TODO -->
+		</div>
+
 		<div id = 'networkParamshell'>
 
 			<div class = 'category' id='paramtruck'>
@@ -580,9 +638,6 @@
 
 	</div>
 
-</div>
-<div id='footer'>
-	<a href='https://accessibility.mit.edu'>Accessibility</a>
 </div>
 </body>
 </html>
