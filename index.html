@@ -110,8 +110,9 @@
 			<div class="options">
 				<label for="ports">端口:</label>
 				<select id="ports">
-				  <option value="prompt">点击'连接'添加端口...</option>
+				  <option value="prompt">点击'刷新'刷新端口...</option>
 				</select>
+				<button id="refresh">刷新</button>
 				<button id="connect">连接</button>
 			  
 				<button id="download">下载输出</button>
@@ -131,8 +132,17 @@
 				  <option value="230400">230400</option>
 				  <option value="460800">460800</option>
 				  <option value="921600">921600</option>
-				  <option value="custom">Custom</option>
 				</select>
+				<label for="databits">数据位:</label>
+        <select id="databits">
+            <option value="7">7</option>
+            <option value="8" selected>8</option>
+        </select>
+        <label for="stopbits">停止位:</label>
+        <select id="stopbits">
+            <option value="1" selected>1</option>
+            <option value="2">2</option>
+        </select>
 			</div>
 		</div>
 
