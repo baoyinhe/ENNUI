@@ -5,9 +5,8 @@ import {plotAccuracy,
         plotLoss,
         resetPlotValues,
         setupPlots,
-        setupTestResults,
         showConfusionMatrix,
-        showPredictions} from "./graphs";
+        } from "./graphs";
 
 import {dataset} from "./data";
 import { model } from "./params_object";
@@ -21,10 +20,11 @@ export async function train(): Promise<void> {
     // Set up all of the plots
     resetPlotValues();
     setupPlots();
-    setupTestResults();
+    // setupTestResults();
     await dataset.load();
 
-    const onIteration = () => showPredictions();
+    const onIteration = () => { };
+    // const onIteration = () => showPredictions();
     const optimizer = model.params.getOptimizer();
 
     model.architecture.compile({

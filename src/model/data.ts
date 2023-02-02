@@ -266,9 +266,9 @@ export function changeDataset(newDataset: string): void {
     }
 
     // Set the image visualizations divs with class name identifiers
-    Array.from(document.getElementById("classes").getElementsByClassName("option")).forEach((element, i) => {
-        if (i !== 0) { // Skip the first since it represents 'Any' class
-            element.innerHTML = (i - 1) + ( dataset.classStrings != null ? ` (${dataset.classStrings[i]})` : "");
-        }
-    });
+    // Array.from(document.getElementById("classes").getElementsByClassName("option")).forEach((element, i) => {
+    //     if (i !== 0) { // Skip the first since it represents 'Any' class
+    //         element.innerHTML = (i - 1) + ( dataset.classStrings != null ? ` (${dataset.classStrings[i]})` : "");
+    //     }
+    // });
 }

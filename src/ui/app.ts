@@ -3,7 +3,7 @@ import { buildNetworkDAG, topologicalSort } from "../model/build_network";
 import { generateJulia, generatePython } from "../model/code_generation";
 import { changeDataset } from "../model/data";
 import { download, graphToJson } from "../model/export_model";
-import { setupPlots, setupTestResults, showPredictions } from "../model/graphs";
+import { setupPlots } from "../model/graphs";
 import { train } from "../model/mnist_model";
 import { model } from "../model/params_object";
 import { loadStateIfPossible, storeNetworkInUrl } from "../model/save_state_url";
@@ -47,7 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // This function runs when the DOM is ready, i.e. when the document has been parsed
     setupSerial();
     setupPlots();
-    setupTestResults();
 
     setupOptionOnClicks();
     setupIndividualOnClicks();
@@ -119,12 +118,6 @@ function setupOptionOnClicks(): void {
     });
     addOnClickToOptions("educationStory", (articleType) => {
         document.getElementById("education" + articleType).scrollIntoView(true);
-    });
-    addOnClickToOptions("classes", (_, element) => {
-        selectOption("classes", element);
-        if (model.architecture != null) {
-            showPredictions();
-        }
     });
     addOnClickToOptions("optimizers", (optimizerType, element) => {
         selectOption("optimizers", element);
@@ -360,8 +353,6 @@ export function tabSelected(): string {
         return "networkTab";
     } else if (document.getElementById("progressTab").style.display !== "none") {
         return "progressTab";
-    } else if (document.getElementById("visualizationTab").style.display !== "none") {
-        return "visualizationTab";
     } else if (document.getElementById("educationTab").style.display !== "none") {
         return "educationTab";
     } else {
@@ -374,28 +365,24 @@ function switchTab(tabType: string): void {
     document.getElementById("datacollectionTab").style.display = "none";
     document.getElementById("networkTab").style.display = "none";
     document.getElementById("progressTab").style.display = "none";
-    document.getElementById("visualizationTab").style.display = "none";
     document.getElementById("educationTab").style.display = "none";
 
     // Hide all menus
     document.getElementById("datacollectionMenu").style.display = "none";
     document.getElementById("networkMenu").style.display = "none";
     document.getElementById("progressMenu").style.display = "none";
-    document.getElementById("visualizationMenu").style.display = "none";
     document.getElementById("educationMenu").style.display = "none";
 
     // Hide all paramshells
     document.getElementById("datacollectionParamshell").style.display = "none";
     document.getElementById("networkParamshell").style.display = "none";
     document.getElementById("progressParamshell").style.display = "none";
-    document.getElementById("visualizationParamshell").style.display = "none";
     document.getElementById("educationParamshell").style.display = "none";
 
     // Unselect all tabs
     document.getElementById("datacollection").classList.remove("tab-selected");
     document.getElementById("network").classList.remove("tab-selected");
     document.getElementById("progress").classList.remove("tab-selected");
-    document.getElementById("visualization").classList.remove("tab-selected");
     document.getElementById("education").classList.remove("tab-selected");
 
     // Display only the selected tab
@@ -411,7 +398,6 @@ function switchTab(tabType: string): void {
         case "datacollection": dataCollectionClick(); break; // TODO
         case "network": resizeMiddleSVG(); break;
         case "progress": setupPlots(); break;
-        case "visualization": showPredictions(); break;
         case "education":
             document.getElementById("paramshell").style.display = "none";
             break;
@@ -425,7 +411,7 @@ function switchTab(tabType: string): void {
             .remove("bottom_neighbor_tab-selected");
     }
 
-    const tabMapping = ["blanktab", "datacollection", "network", "progress", "visualization",
+    const tabMapping = ["blanktab", "datacollection", "network", "progress",
         "middleblanktab", "education", "bottomblanktab"];
     const index = tabMapping.indexOf(tabType);
 
