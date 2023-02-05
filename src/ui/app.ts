@@ -8,7 +8,7 @@ import { train } from "../model/mnist_model";
 import { model } from "../model/params_object";
 import { loadStateIfPossible, storeNetworkInUrl } from "../model/save_state_url";
 import { clearError, displayError } from "./error";
-import { blankTemplate, defaultTemplate, resnetTemplate } from "./model_templates";
+import { blankTemplate, cnnTemplate, mlpTemplate } from "./model_templates";
 import { Activation, Relu, Sigmoid, Tanh } from "./shapes/activation";
 import { ActivationLayer } from "./shapes/activationlayer";
 import { Draggable } from "./shapes/draggable";
@@ -139,8 +139,8 @@ function selectOption(optionCategoryId: string, optionElement: HTMLElement): voi
 function createTemplate(template: string): void {
     switch (template) {
         case "blank": blankTemplate(svgData); break;
-        case "default": defaultTemplate(svgData); break;
-        case "resnet": resnetTemplate(svgData); break;
+        case "mlp": mlpTemplate(svgData); break;
+        case "cnn": cnnTemplate(svgData); break;
 
     }
 }

@@ -1,5 +1,5 @@
 import { IDraggableData } from "./app";
-import { Activation, Relu } from "./shapes/activation";
+import { Activation, Relu, Softmax } from "./shapes/activation";
 import { ActivationLayer } from "./shapes/activationlayer";
 import { Layer } from "./shapes/layer";
 import { Add } from "./shapes/layers/add";
@@ -225,4 +225,115 @@ export function complexTemplate(svgData: IDraggableData): void {
     svgData.draggable.push(flat1);
     svgData.draggable.push(flat2);
     svgData.draggable.push(batch);
+}
+
+
+export function mlpTemplate(svgData: IDraggableData): void {
+    resetWorkspace(svgData);
+
+    // Initialize each of the layers and activations
+    const canvasBoundingBox = getSvgOriginalBoundingBox(document.getElementById("svg") as any as SVGSVGElement);
+    const width = canvasBoundingBox.width;
+    const height = canvasBoundingBox.height;
+
+    const dense0Pos = new Point(width * 2 / 6.5, height / 2.48);
+    const dense1Pos = new Point(width * 3 / 6.5, height / 2.48);
+    const dense2Pos = new Point(width * 4 / 6.5, height / 2.48);
+
+    const dense0: ActivationLayer = new Dense(dense0Pos);
+    const dense1: ActivationLayer = new Dense(dense1Pos);
+    const dense2: ActivationLayer = new Dense(dense2Pos);
+    const dense0Relu: Activation = new Relu(dense0Pos);
+    const dense1Relu: Activation = new Relu(dense1Pos);
+    const dense2Softmax: Activation = new Softmax(dense2Pos);
+
+    // Add relationships among layers and activations
+    svgData.input.addChild(dense0);
+    dense0.addActivation(dense0Relu);
+    dense0.addChild(dense1);
+    
+    dense1.addActivation(dense1Relu);
+    dense1.addChild(dense2);
+
+    dense2.addActivation(dense2Softmax);
+    dense2.addChild(svgData.output);
+
+    // Store the new network
+    svgData.draggable.push(dense0);
+    svgData.draggable.push(dense1);
+    svgData.draggable.push(dense2);
+    svgData.draggable.push(dense0Relu);
+    svgData.draggable.push(dense1Relu);
+    svgData.draggable.push(dense2Softmax);
+}
+
+export function cnnTemplate(svgData: IDraggableData): void {
+    resetWorkspace(svgData);
+
+    // Initialize each of the layers and activations
+    const canvasBoundingBox = getSvgOriginalBoundingBox(document.getElementById("svg") as any as SVGSVGElement);
+    const width = canvasBoundingBox.width;
+    const height = canvasBoundingBox.height;
+
+    const conv0Pos = new Point(width * 1.5 / 7, height / 5);
+    const maxpool0Pos = new Point(width * 2.5 / 7, height / 5.3);
+    const dropout0Pos = new Point(width * 3 / 7, height / 7.9);
+    const conv1Pos = new Point(width * 4.3 / 7, height / 5);
+    const maxpool1Pos = new Point(width * 5.1 / 7, height / 5.3);
+    const dropout1Pos = new Point(width * 5.8 / 7, height / 7.9);
+    const flattenPos = new Point(width * 3 / 8, height / 2);
+    const dense0Pos = new Point(width * 4 / 8, height / 2.2);
+    const dropout2Pos = new Point(width * 4.8 / 8, height / 2.7);
+    const dense1Pos = new Point(width * 6 / 8, height / 2.2);
+
+    const conv0: ActivationLayer = new Conv2D(conv0Pos);
+    const conv0Relu: Activation = new Relu(conv0Pos);
+    const maxpool0: MaxPooling2D = new MaxPooling2D(maxpool0Pos);
+    const droupout0: Dropout = new Dropout(dropout0Pos);
+    const conv1: ActivationLayer = new Conv2D(conv1Pos);
+    const conv1Relu: Activation = new Relu(conv1Pos);
+    const maxpool1: MaxPooling2D = new MaxPooling2D(maxpool1Pos);
+    const droupout1: Dropout = new Dropout(dropout1Pos);
+    const flat: Flatten = new Flatten(flattenPos);
+    const dense0: ActivationLayer = new Dense(dense0Pos);
+    const dense0Relu: Activation = new Relu(dense0Pos);
+    const droupout2: Dropout = new Dropout(dropout2Pos);
+    const dense1: ActivationLayer = new Dense(dense1Pos);
+    const dense1Softmax: Activation = new Softmax(dense1Pos);
+    
+
+    // Add relationships among layers and activations
+    svgData.input.addChild(conv0);
+    conv0.addActivation(conv0Relu);
+    conv0.addChild(maxpool0);
+    maxpool0.addChild(droupout0);
+    droupout0.addChild(conv1);
+
+    conv1.addActivation(conv1Relu);
+    conv1.addChild(maxpool1);
+    maxpool1.addChild(droupout1);
+    droupout1.addChild(flat);
+
+    flat.addChild(dense0);
+    dense0.addActivation(dense0Relu);
+    dense0.addChild(droupout2);
+    droupout2.addChild(dense1);
+    dense1.addActivation(dense1Softmax);
+    dense1.addChild(svgData.output);
+
+    // Store the new network
+    svgData.draggable.push(conv0);
+    svgData.draggable.push(conv0Relu);
+    svgData.draggable.push(maxpool0);
+    svgData.draggable.push(droupout0);
+    svgData.draggable.push(conv1);
+    svgData.draggable.push(conv1Relu);
+    svgData.draggable.push(maxpool1);
+    svgData.draggable.push(droupout1);
+    svgData.draggable.push(flat);
+    svgData.draggable.push(dense0);
+    svgData.draggable.push(dense0Relu);
+    svgData.draggable.push(droupout2);
+    svgData.draggable.push(dense1);
+    svgData.draggable.push(dense1Softmax);
 }
