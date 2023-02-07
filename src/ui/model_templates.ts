@@ -38,36 +38,38 @@ export function resetWorkspace(svgData: IDraggableData): void {
 }
 
 export function defaultTemplate(svgData: IDraggableData): void {
-    resetWorkspace(svgData);
+    mlpTemplate(svgData);
 
-    // Initialize each of the layers and activations
-    const canvasBoundingBox = getSvgOriginalBoundingBox(document.getElementById("svg") as any as SVGSVGElement);
-    const convStartingPosition = new Point(canvasBoundingBox.width / 4, canvasBoundingBox.height / 2.5);
-    const flatStartingPosition = new Point(canvasBoundingBox.width / 1.75, canvasBoundingBox.height / 2.5);
-    const denseStartingPosition = new Point(canvasBoundingBox.width * 5 / 6.5, canvasBoundingBox.height / 2.5);
-    const conv: ActivationLayer = new Conv2D(convStartingPosition);
-    const convRelu: Activation = new Relu(convStartingPosition);
+    // resetWorkspace(svgData);
 
-    const flat: Layer = new Flatten(flatStartingPosition);
-    const dense: ActivationLayer = new Dense(denseStartingPosition);
-    const denseRelu: Activation = new Relu(denseStartingPosition);
+    // // Initialize each of the layers and activations
+    // const canvasBoundingBox = getSvgOriginalBoundingBox(document.getElementById("svg") as any as SVGSVGElement);
+    // const convStartingPosition = new Point(canvasBoundingBox.width / 4, canvasBoundingBox.height / 2.5);
+    // const flatStartingPosition = new Point(canvasBoundingBox.width / 1.75, canvasBoundingBox.height / 2.5);
+    // const denseStartingPosition = new Point(canvasBoundingBox.width * 5 / 6.5, canvasBoundingBox.height / 2.5);
+    // const conv: ActivationLayer = new Conv2D(convStartingPosition);
+    // const convRelu: Activation = new Relu(convStartingPosition);
 
-    // Add relationships among layers and activations
-    svgData.input.addChild(conv);
-    conv.addChild(flat);
-    conv.addActivation(convRelu);
+    // const flat: Layer = new Flatten(flatStartingPosition);
+    // const dense: ActivationLayer = new Dense(denseStartingPosition);
+    // const denseRelu: Activation = new Relu(denseStartingPosition);
 
-    flat.addChild(dense);
+    // // Add relationships among layers and activations
+    // svgData.input.addChild(conv);
+    // conv.addChild(flat);
+    // conv.addActivation(convRelu);
 
-    dense.addChild(svgData.output);
-    dense.addActivation(denseRelu);
+    // flat.addChild(dense);
 
-    // Store the new network
-    svgData.draggable.push(conv);
-    svgData.draggable.push(dense);
-    svgData.draggable.push(flat);
-    svgData.draggable.push(convRelu);
-    svgData.draggable.push(denseRelu);
+    // dense.addChild(svgData.output);
+    // dense.addActivation(denseRelu);
+
+    // // Store the new network
+    // svgData.draggable.push(conv);
+    // svgData.draggable.push(dense);
+    // svgData.draggable.push(flat);
+    // svgData.draggable.push(convRelu);
+    // svgData.draggable.push(denseRelu);
 }
 
 export function blankTemplate(svgData: IDraggableData): void {

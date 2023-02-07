@@ -1,12 +1,12 @@
 import * as d3 from "d3";
 import { buildNetworkDAG, topologicalSort } from "../model/build_network";
-import { generateJulia, generatePython } from "../model/code_generation";
+import { generatePython } from "../model/code_generation";
 import { changeDataset } from "../model/data";
-import { download, graphToJson } from "../model/export_model";
+import { download } from "../model/export_model";
 import { setupPlots } from "../model/graphs";
 import { train } from "../model/mnist_model";
 import { model } from "../model/params_object";
-import { loadStateIfPossible, storeNetworkInUrl } from "../model/save_state_url";
+import { loadStateIfPossible } from "../model/save_state_url";
 import { clearError, displayError } from "./error";
 import { blankTemplate, cnnTemplate, mlpTemplate } from "./model_templates";
 import { Activation, Relu, Sigmoid, Tanh } from "./shapes/activation";
@@ -25,7 +25,6 @@ import { MaxPooling2D } from "./shapes/layers/maxpooling";
 import { Output } from "./shapes/layers/output";
 import { TextBox } from "./shapes/textbox";
 import { WireGuide } from "./shapes/wireguide";
-import { copyTextToClipboard } from "./utils";
 import { windowProperties } from "./window";
 import { setupSerial } from './serial';
 
@@ -93,10 +92,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // 加载默认网络模型
     svgData = loadStateIfPossible();
 
     // Select the input block when we load the page
-    svgData.input.select();
+    // svgData.input.select();
 
 });
 
@@ -111,7 +111,6 @@ function addOnClickToOptions(categoryId: string, func: (optionValue: string, ele
 function setupOptionOnClicks(): void {
     addOnClickToOptions("tabselector", (tabType) => switchTab(tabType));
     addOnClickToOptions("layers", (layerType) => appendItem(layerType));
-    addOnClickToOptions("activations", (activationType) => appendItem(activationType));
     addOnClickToOptions("templates", (templateType) => createTemplate(templateType));
     addOnClickToOptions("educationLayers", (articleType) => {
         document.getElementById("education" + articleType).scrollIntoView(true);
@@ -170,34 +169,17 @@ function setupIndividualOnClicks(): void {
         download(generatePython(topologicalSort(svgData.input)), filename);
     });
 
-    document.getElementById("exportJulia").addEventListener("click", () => {
-        changeDataset(svgData.input.getParams().dataset);
-        if (svgData.input.getParams().dataset === "cifar") {
-            displayError(new Error("Julia Export does not support CIFAR10, use MNIST instead."));
-        } else {
-            const filename = svgData.input.getParams().dataset + "_model.jl";
-            download(generateJulia(topologicalSort(svgData.input)), filename);
-        }
-    });
-
-    document.getElementById("copyModel").addEventListener("click", () => {
-        changeDataset(svgData.input.getParams().dataset); // TODO change dataset should happen when the dataset changes
-        const state = graphToJson(svgData);
-        const baseUrl: string = window.location.href;
-        const urlParam: string = storeNetworkInUrl(state);
-        copyTextToClipboard(baseUrl + "#" + urlParam);
-    });
+    // document.getElementById("exportJulia").addEventListener("click", () => {
+    //     changeDataset(svgData.input.getParams().dataset);
+    //     if (svgData.input.getParams().dataset === "cifar") {
+    //         displayError(new Error("Julia Export does not support CIFAR10, use MNIST instead."));
+    //     } else {
+    //         const filename = svgData.input.getParams().dataset + "_model.jl";
+    //         download(generateJulia(topologicalSort(svgData.input)), filename);
+    //     }
+    // });
 
     document.getElementById("train").addEventListener("click", trainOnClick);
-
-    // document.getElementById("informationEducation").addEventListener("click", () => {
-    //     document.getElementById("informationOverlay").style.display = "none";
-    //     switchTab("education");
-    // });
-
-    // document.getElementById("informationOverlay").addEventListener("click", () => {
-    //     document.getElementById("informationOverlay").style.display = "none";
-    // });
 
     document.getElementById("x").addEventListener("click", () => clearError());
 
@@ -249,7 +231,7 @@ async function trainOnClick(): Promise<void> {
 }
 
 function dataCollectionClick(): void {
-    document.getElementById("paramshell").style.display = "none";
+    // document.getElementById("paramshell").style.display = "none";
 }
 
 function resizeMiddleSVG(): void {

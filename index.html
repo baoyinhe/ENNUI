@@ -158,42 +158,32 @@
 				</div>
 				<div class = 'option select-option' data-optionValue = 'dense'> Dense </div>
 				<div class = 'option select-option' data-optionValue = 'conv2D'> Convolution </div>
-				<div class = 'option select-option' data-optionValue = 'maxPooling2D'> Max Pooling </div>
-
+				<div title = 'Modify batches of data during training to make them more similar, resulting in faster convergence and better results.'
+						class = 'option select-option' data-optionValue = 'batchnorm'> BN</div>
 
 				<div class = 'option-dropdown'>
-					<div style="float:left">More</div>
+					<div style="float:left">Activation</div>
 					<div style="float:right">〉</div>
 					<div class='dropdown-content left'>
-						<div title = 'Modify batches of data during training to make them more similar, resulting in faster convergence and better results.'
-							 class = 'option select-option' data-optionValue = 'batchnorm'> Batch Normalization</div>
-						<div title = 'Ignore a different random portion of the weights each batch for better generalization and faster training.'
-							 class = 'option select-option' data-optionValue = 'dropout'> Dropout</div>
-						<div title = 'Flatten a list of 2D images into a 1D feature vector.'
-							 class = 'option select-option' data-optionValue = 'flatten'> Flatten</div>
-						<div title = 'Concatenate two or more inputs that are all 1D or all 2D.'
-							 class = 'option select-option' data-optionValue = 'concatenate'> Concatenate</div>
-						<div title = 'Add two or more inputs together.'
-							 class = 'option select-option last-dropdown' data-optionValue = 'add'> Add</div>
+						<div class = 'option select-option' data-optionValue = 'relu'> ReLU </div>
+						<div class = 'option select-option' data-optionValue = 'sigmoid'> Sigmoid </div>
+						<div class = 'option select-option last-dropdown' data-optionValue = 'tanh'> Tanh </div>
 					</div>
 				</div>
+
+				<div class = 'option select-option' data-optionValue = 'maxPooling2D'> Max Pooling </div>
+				<div title = 'Ignore a different random portion of the weights each batch for better generalization and faster training.'
+						class = 'option select-option' data-optionValue = 'dropout'> Dropout</div>
+				<div title = 'Flatten a list of 2D images into a 1D feature vector.'
+						class = 'option select-option' data-optionValue = 'flatten'> Flatten</div>
+				<div title = 'Concatenate two or more inputs that are all 1D or all 2D.'
+						class = 'option select-option' data-optionValue = 'concatenate'> Concatenate</div>
+				<div title = 'Add two or more inputs together.'
+					 class = 'option select-option' data-optionValue = 'add'> Add</div>
+
+
 			</div>
 
-			<div id = 'activations' class = 'category'>
-				<div class = 'categoryTitle' data-expanded = 'true'>
-					<div class='expander'>
-						<svg height="24px" width="24px">
-							<path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" style="fill:#FFFFFF;"></path>
-						</svg>
-					</div>
-					<div class='categoryTitleText'>
-						激活函数
-					</div>
-				</div>
-				<div class = 'option select-option' data-optionValue = 'relu'> ReLU </div>
-				<div class = 'option select-option' data-optionValue = 'sigmoid'> Sigmoid </div>
-				<div class = 'option select-option' data-optionValue = 'tanh'> Tanh </div>
-			</div>
 			<div id = 'templates' class = 'bottomCategory'>
 				<div class = 'categoryTitle' data-expanded = 'true'>
 					<div class='expander'>
@@ -481,7 +471,7 @@
 	<!-- The right panel -->
 	<div id = 'paramshell'>
 		<div class = 'trainbox' id = 'trainbox'>
-			<div id = 'train' class = 'train' data-actionType = 'json'> Train </div>
+			<div id = 'train' class = 'train' data-actionType = 'json'> 训练 </div>
 		</div>
 
 		<div class = 'category' id = 'kerasinfo'>
@@ -492,7 +482,7 @@
 					</svg>
 				</div>
 				<div class='categoryTitleText'>
-					Model Status
+					模型状态
 				</div>
 			</div>
 			<div class = 'parambox'>
@@ -518,7 +508,8 @@
 				</div>
 			</div>
 		</div>
-		<div class="category">
+
+		<div class="bottomCategory">
 			<div class = 'categoryTitle' data-expanded = 'true'>
 				<div class='expander'>
 					<svg height="24px" width="24px">
@@ -526,12 +517,11 @@
 					</svg>
 				</div>
 				<div class='categoryTitleText'>
-					Share
+					导出
 				</div>
 			</div>
-			<div id="exportPython" class="select-option right-option">Export to Python</div>
-			<div id="exportJulia" class="select-option right-option">Export to Julia</div>
-			<div id="copyModel" class="select-option right-option">Copy model link</div>
+			<div id="exportPython" class="select-option right-option">导出Python</div>
+			<div id="exportTflite" class="select-option right-option">导出tflite</div>
 		</div>
 
 		<div id = 'datacollectionParamshell' style="display: none">
@@ -548,7 +538,7 @@
 						</svg>
 					</div>
 					<div class='categoryTitleText'>
-						Parameters
+						参数
 					</div>
 				</div>
 				<div id='defaultparambox' class = 'parambox'>Click on a layer to view and change its parameters.</div>
@@ -564,7 +554,7 @@
 						</svg>
 					</div>
 					<div class='categoryTitleText'>
-						Hyperparams
+						超参数
 					</div>
 				</div>
 				<div class = 'parambox'>
