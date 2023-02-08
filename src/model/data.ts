@@ -1,274 +1,99 @@
-// Adapted from https://github.com/tensorflow/tfjs-examples/blob/master/mnist/data.js
-
 import * as tf from "@tensorflow/tfjs";
-import { Rank, Tensor } from "@tensorflow/tfjs";
-// import { Cifar10 } from "tfjs-cifar10-web";
+import { networkType, NetType } from "./model";
+var fs = require("fs");
 
-const NUM_DATASET_ELEMENTS = 65000;
+const negativeUrl = 'D:/Study/bisheReposity/ENNUI/src/model/data/negative.csv';
+const punchUrl = 'D:/Study/bisheReposity/ENNUI/src/model/data/punch.csv';
+const ringUrl = 'D:/Study/bisheReposity/ENNUI/src/model/data/ring.csv';
+const wingUrl = 'D:/Study/bisheReposity/ENNUI/src/model/data/wing.csv';
 
-export const NUM_TRAIN_ELEMENTS = 55000;
-// const NUM_TEST_ELEMENTS = NUM_DATASET_ELEMENTS - NUM_TRAIN_ELEMENTS;
+export const SAMPLES_PER_GESTURE = 50;
+export const COLLECT_DATA_NUM = 6;
+export const VALIDDATAPORTION = 0.2;
+export const NUM_CLASSES = 4;
 
-const MNIST_IMAGES_SPRITE_PATH =
-    "https://storage.googleapis.com/learnjs-data/model-builder/mnist_images.png";
-const MNIST_LABELS_PATH =
-    "https://storage.googleapis.com/learnjs-data/model-builder/mnist_labels_uint8";
+export let trainX: tf.Tensor;
+export let trainY: tf.Tensor;
+export let testX: tf.Tensor;
+export let testY: tf.Tensor;
 
-/**
- * A class that serves as a schema for loading image data.
+/** 
+ * @param csvfile {string} 表示文件路径的字符串
+ * @returns data {Array}
  */
-export abstract class ImageData {
-    public readonly IMAGE_HEIGHT: number;
-    public readonly IMAGE_WIDTH: number;
-    public readonly IMAGE_CHANNELS: number;
-    public readonly IMAGE_SIZE: number;
-    public readonly NUM_CLASSES: number;
-    public pythonName: string;
+function csv_to_tensor(csvfile: string): tf.Tensor{
+  let csvstr = fs.readFileSync(csvfile,"utf8",'r+');
+  let stringArr = csvstr.split('\r\n') as string[];
+  if (stringArr[stringArr.length-1] === "") {
+    stringArr.pop();
+  }
+  let numberArr = [] as number[];
+    stringArr.forEach((line: string) => {
+    let dataArr = line.split(',');
+    dataArr.forEach((data: string) => {
+      numberArr.push(Number.parseFloat(data))
+    })
+  });
 
-    public dataLoaded: boolean = false;
-
-    public readonly classStrings: string[] = null;
-
-    protected trainImages: Tensor<Rank.R4>;
-    protected testImages: Tensor<Rank>;
-    protected trainLabels: Tensor<Rank>;
-    protected testLabels: Tensor<Rank>;
-    protected datasetName: string;
-
-    public async load(): Promise<void> { };
-
-    /**
-     * Get all training data as a data tensor and a labels tensor.
-     *
-     * @returns
-     *   xs: The data tensor, of shape `[numTrainExamples, IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_CHANNELS]`.
-     *   labels: The one-hot encoded labels tensor, of shape `[numTrainExamples, NUM_CLASSES]`.
-     */
-    public getTrainData(numExamples: number = 15000): {xs: Tensor<tf.Rank.R4>, labels: Tensor<tf.Rank.R2>} {
-        let xs = tf.reshape<tf.Rank.R4>(this.trainImages, [this.trainImages.size / this.IMAGE_SIZE,
-                                                           this.IMAGE_HEIGHT,
-                                                           this.IMAGE_WIDTH,
-                                                           this.IMAGE_CHANNELS]);
-        let labels = tf.reshape<tf.Rank.R2>(this.trainLabels,
-                                            [this.trainLabels.size / this.NUM_CLASSES, this.NUM_CLASSES]);
-        if (numExamples != null) {
-            xs = xs.slice([0, 0, 0, 0], [numExamples, this.IMAGE_HEIGHT, this.IMAGE_WIDTH, this.IMAGE_CHANNELS]);
-            labels = labels.slice([0, 0], [numExamples, this.NUM_CLASSES]);
-        }
-        return {xs, labels};
-    }
-
-    /**
-     * Get all test data as a data tensor a a labels tensor.
-     *
-     * @param {number} numExamples Optional number of examples to get. If not provided,
-     *   all test examples will be returned.
-     * @returns
-     *   xs: The data tensor, of shape `[numTrainExamples, IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_CHANNELS]`.
-     *   labels: The one-hot encoded labels tensor, of shape `[numTestExamples, NUM_CLASSES]`.
-     */
-    public getTestData(numExamples: number = 1500): {xs: Tensor<tf.Rank.R4>, labels: Tensor<tf.Rank.R2>} {
-        let xs = tf.reshape<tf.Rank.R4>(this.testImages, [this.testImages.size / this.IMAGE_SIZE,
-                                                          this.IMAGE_HEIGHT,
-                                                          this.IMAGE_WIDTH,
-                                                          this.IMAGE_CHANNELS]);
-        let labels = tf.reshape<tf.Rank.R2>(this.testLabels,
-                                            [this.testLabels.size / this.NUM_CLASSES, this.NUM_CLASSES]);
-
-        if (numExamples != null) {
-            xs = xs.slice([0, 0, 0, 0], [numExamples, this.IMAGE_HEIGHT, this.IMAGE_WIDTH, this.IMAGE_CHANNELS]);
-            labels = labels.slice([0, 0], [numExamples, this.NUM_CLASSES]);
-        }
-        return {xs, labels};
-    }
-
-    /**
-     * Returns test examples with the desired label.
-     *
-     * @param {number} numExamples number of examples to get.
-     * @returns xs: The data tensor, of shape `[numTrainExamples, IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_CHANNELS]`.
-     *          labels: The one-hot encoded labels tensor, of shape `[numTestExamples, NUM_CLASSES]`.
-     */
-    public async getTestDataWithLabel(numExamples: number,
-                                      label: string): Promise<{xs: Tensor<tf.Rank.R4>, labels: Tensor<tf.Rank.R2>}> {
-        if (label === "all") {
-            return this.getTestData(numExamples);
-        }
-
-        let {xs, labels} = this.getTestData();
-
-        // select only the numbers with the given label
-        const classLabels = labels.argMax(1).arraySync() as number[];
-        const mask = tf.equal(classLabels, parseInt(label, 10));
-        xs = await tf.booleanMaskAsync(xs, mask) as Tensor<tf.Rank.R4>;
-        labels = await tf.booleanMaskAsync(labels, mask) as Tensor<tf.Rank.R2>;
-        xs = xs.slice([0, 0, 0, 0], [numExamples, xs.shape[1], xs.shape[2], xs.shape[3]]) as Tensor<tf.Rank.R4>;
-        labels = labels.slice([0, 0], [numExamples, labels.shape[1]]) as Tensor<tf.Rank.R2>;
-        return {xs, labels};
-    }
-
-    protected toggleLoadingOverlay(): void {
-        if (document.getElementById("loadingDataTab").style.display === "none") {
-            document.getElementById("datasetLoadingName").innerText = this.datasetName;
-            document.getElementById("loadingDataTab").style.display = "block";
-        } else {
-            document.getElementById("loadingDataTab").style.display = "none";
-        }
-    }
+  return tf.tensor(numberArr);
 }
 
-/**
- * A class that fetches the sprited CIFAR dataset and provide data as
- * Tensors.
- */
-// export class Cifar10Data extends ImageData {
 
-//     public static get Instance(): ImageData {
-//         return this.instance || (this.instance = new this());
-//     }
-
-//     private static instance: Cifar10Data;
-//     public IMAGE_HEIGHT: number = 32;
-//     public IMAGE_WIDTH: number = 32;
-//     public IMAGE_CHANNELS: number = 3;
-//     public IMAGE_SIZE: number = this.IMAGE_HEIGHT * this.IMAGE_WIDTH * this.IMAGE_CHANNELS;
-//     public NUM_CLASSES: number = 10;
-
-//     public datasetName: string = "CIFAR-10";
-//     public pythonName: string = "cifar10";
-
-//     public readonly classStrings: string[] =
-//         ["Airplane", "Automobile", "Bird", "Cat", "Deer", "Dog", "Frog", "Horse", "Ship", "Truck"];
-
-//     public async load(): Promise<void> {
-//         if (this.dataLoaded) {
-//             return;
-//         }
-
-//         this.toggleLoadingOverlay();
-
-//         const data = new Cifar10();
-//         await data.load();
-
-//         const {xs: trainX, ys: trainY} = data.nextTrainBatch(15000);
-//         const {xs: testX, ys: testY} = data.nextTestBatch(1500);
-//         this.trainImages = trainX as unknown as Tensor<Rank.R4>;
-//         this.trainLabels = trainY as unknown as Tensor<Rank.R4>;
-//         this.testImages = testX as unknown as Tensor<Rank.R2>;
-//         this.testLabels = testY as unknown as Tensor<Rank.R2>;
-
-//         this.dataLoaded = true;
-
-//         document.getElementById("loadingDataTab").style.display = "none";
-//     }
-
-// }
-
-/**
- * A class that fetches the sprited MNIST dataset and provide data as
- * Tensors.
- */
-export class MnistData extends ImageData {
-
-    public static get Instance(): ImageData {
-        return this.instance || (this.instance = new this());
-    }
-
-    private static instance: MnistData;
-    public IMAGE_HEIGHT: number = 28;
-    public IMAGE_WIDTH: number = 28;
-    public IMAGE_CHANNELS: number = 1;
-    public IMAGE_SIZE: number = this.IMAGE_HEIGHT * this.IMAGE_WIDTH * this.IMAGE_CHANNELS;
-    public NUM_CLASSES: number = 10;
-
-    public datasetName: string = "MNIST";
-    public pythonName: string = "mnist";
-
-    public async load(): Promise<void> {
-        // Make a request for the MNIST sprited image.
-        if (this.dataLoaded) {
-            return;
-        }
-
-        this.toggleLoadingOverlay();
-
-        const img = new Image();
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        const imgRequest = new Promise<Float32Array>((resolve, _) => {
-            img.crossOrigin = "";
-            img.onload = () => {
-                img.width = img.naturalWidth;
-                img.height = img.naturalHeight;
-
-                const datasetBytesBuffer = new ArrayBuffer(NUM_DATASET_ELEMENTS * this.IMAGE_SIZE * 4);
-
-                const chunkSize = 5000;
-                canvas.width = img.width;
-                canvas.height = chunkSize;
-
-                for (let i = 0; i < NUM_DATASET_ELEMENTS / chunkSize; i++) {
-                    const datasetBytesView = new Float32Array(
-                        datasetBytesBuffer, i * this.IMAGE_SIZE * chunkSize * 4,
-                        this.IMAGE_SIZE * chunkSize);
-                    ctx.drawImage(
-                        img, 0, i * chunkSize, img.width, chunkSize, 0, 0, img.width,
-                        chunkSize);
-
-                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-                    for (let j = 0; j < imageData.data.length / 4; j++) {
-                        // All channels hold an equal value since the image is grayscale, so
-                        // just read the red channel.
-                        datasetBytesView[j] = imageData.data[j * 4] / 255;
-                    }
-                }
-                const dataImages = new Float32Array(datasetBytesBuffer);
-
-                resolve(dataImages);
-            };
-            img.src = MNIST_IMAGES_SPRITE_PATH;
-        });
-
-        const labelsRequest = fetch(MNIST_LABELS_PATH);
-        const [datasetImages, labelsResponse] = await Promise.all([imgRequest, labelsRequest]);
-
-        const datasetLabels = new Uint8Array(await labelsResponse.arrayBuffer());
-
-        // Slice the the images and labels into train and test sets.
-        const trainImages = datasetImages.slice(0, this.IMAGE_SIZE * NUM_TRAIN_ELEMENTS);
-        this.trainImages = tf.tensor4d(trainImages, [trainImages.length / this.IMAGE_SIZE,
-                                                     this.IMAGE_HEIGHT, this.IMAGE_WIDTH,
-                                                     this.IMAGE_CHANNELS]);
-        const testImages = datasetImages.slice(this.IMAGE_SIZE * NUM_TRAIN_ELEMENTS);
-        this.testImages = tf.tensor4d(testImages, [testImages.length / this.IMAGE_SIZE,
-                                                   this.IMAGE_HEIGHT, this.IMAGE_WIDTH,
-                                                   this.IMAGE_CHANNELS]);
-        const trainLabels = datasetLabels.slice(0, this.NUM_CLASSES * NUM_TRAIN_ELEMENTS);
-        this.trainLabels = tf.tensor2d(trainLabels, [trainImages.length / this.IMAGE_SIZE, this.NUM_CLASSES]);
-        const testLabels =
-            datasetLabels.slice(this.NUM_CLASSES * NUM_TRAIN_ELEMENTS);
-        this.testLabels = tf.tensor2d(testLabels, [testImages.length / this.IMAGE_SIZE, this.NUM_CLASSES]);
-
-        this.dataLoaded = true;
-
-        document.getElementById("loadingDataTab").style.display = "none";
-    }
-
+function processs_data(data: tf.Tensor, v: Number): [trainX:tf.Tensor, trainY:tf.Tensor, testX:tf.Tensor, testY:tf.Tensor] {
+  let sample_count = Math.floor(data.size / SAMPLES_PER_GESTURE / COLLECT_DATA_NUM);
+  let dataX = data.reshape([sample_count, SAMPLES_PER_GESTURE * COLLECT_DATA_NUM]);
+  let validation_count = Math.floor(sample_count * VALIDDATAPORTION)
+  let [trainX, testX] = tf.split(dataX, [sample_count - validation_count, validation_count], 0);
+  let dataY;
+  switch (v) {
+    case 0:
+      dataY = tf.tensor([1, 0, 0, 0]);
+      break;
+    case 1:
+      dataY = tf.tensor([0, 1, 0, 0]);
+      break;
+    case 2:
+      dataY = tf.tensor([0, 0, 1, 0]);
+      break;
+    case 3:
+      dataY = tf.tensor([0, 0, 0, 1]);
+    
+  }
+  dataY = dataY.tile([sample_count]).reshape([sample_count, 4]);
+  let [trainY, testY] = tf.split(dataY, [sample_count * (1-VALIDDATAPORTION), sample_count * VALIDDATAPORTION], 0);
+  
+  return [trainX, trainY, testX, testY];
 }
 
-export let dataset: ImageData = MnistData.Instance;
+export function getTrainData(): [trainX:tf.Tensor, trainY:tf.Tensor, testX:tf.Tensor, testY:tf.Tensor] {
+  let negative = csv_to_tensor(negativeUrl)
+  let [ntrainX, ntrainY, ntestX, ntestY] = processs_data(negative, 0);
 
-export function changeDataset(newDataset: string): void {
-    switch (newDataset) {
-        case "mnist": dataset = MnistData.Instance; break;
-        // case "cifar": dataset = Cifar10Data.Instance; break;
-    }
+  let punch = csv_to_tensor(punchUrl);
+  let [ptrainX, ptrainY, ptestX, ptestY] = processs_data(punch, 1);
 
-    // Set the image visualizations divs with class name identifiers
-    // Array.from(document.getElementById("classes").getElementsByClassName("option")).forEach((element, i) => {
-    //     if (i !== 0) { // Skip the first since it represents 'Any' class
-    //         element.innerHTML = (i - 1) + ( dataset.classStrings != null ? ` (${dataset.classStrings[i]})` : "");
-    //     }
-    // });
+  let wing = csv_to_tensor(wingUrl)
+  let [wtrainX, wtrainY, wtestX, wtestY] = processs_data(wing, 2);
+  
+  let ring = csv_to_tensor(ringUrl)
+  let [rtrainX, rtrainY, rtestX, rtestY] = processs_data(ring, 3);
+  
+
+  trainX = tf.concat([ntrainX, ptrainX, wtrainX, rtrainX], 0);
+  trainY = tf.concat([ntrainY, ptrainY, wtrainY, rtrainY], 0);
+  testX = tf.concat([ntestX, ptestX, wtestX, rtestX], 0);
+  testY = tf.concat([ntestY, ptestY, wtestY, rtestY], 0);
+
+  switch (networkType) {
+    case NetType.cnn:
+      trainX = trainX.reshape([trainX.shape[0], SAMPLES_PER_GESTURE, COLLECT_DATA_NUM, 1]);
+      testX = testX.reshape([testX.shape[0], SAMPLES_PER_GESTURE, COLLECT_DATA_NUM, 1]);
+      break;
+    case NetType.rnn:
+      trainX = trainX.reshape([trainX.shape[0], SAMPLES_PER_GESTURE, COLLECT_DATA_NUM]);
+      testX = testX.reshape([testX.shape[0], SAMPLES_PER_GESTURE, COLLECT_DATA_NUM]);
+      break;
+  }
+
+  return [trainX, trainY, testX, testY];
 }

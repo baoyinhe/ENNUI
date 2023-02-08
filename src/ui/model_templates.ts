@@ -39,37 +39,6 @@ export function resetWorkspace(svgData: IDraggableData): void {
 
 export function defaultTemplate(svgData: IDraggableData): void {
     mlpTemplate(svgData);
-
-    // resetWorkspace(svgData);
-
-    // // Initialize each of the layers and activations
-    // const canvasBoundingBox = getSvgOriginalBoundingBox(document.getElementById("svg") as any as SVGSVGElement);
-    // const convStartingPosition = new Point(canvasBoundingBox.width / 4, canvasBoundingBox.height / 2.5);
-    // const flatStartingPosition = new Point(canvasBoundingBox.width / 1.75, canvasBoundingBox.height / 2.5);
-    // const denseStartingPosition = new Point(canvasBoundingBox.width * 5 / 6.5, canvasBoundingBox.height / 2.5);
-    // const conv: ActivationLayer = new Conv2D(convStartingPosition);
-    // const convRelu: Activation = new Relu(convStartingPosition);
-
-    // const flat: Layer = new Flatten(flatStartingPosition);
-    // const dense: ActivationLayer = new Dense(denseStartingPosition);
-    // const denseRelu: Activation = new Relu(denseStartingPosition);
-
-    // // Add relationships among layers and activations
-    // svgData.input.addChild(conv);
-    // conv.addChild(flat);
-    // conv.addActivation(convRelu);
-
-    // flat.addChild(dense);
-
-    // dense.addChild(svgData.output);
-    // dense.addActivation(denseRelu);
-
-    // // Store the new network
-    // svgData.draggable.push(conv);
-    // svgData.draggable.push(dense);
-    // svgData.draggable.push(flat);
-    // svgData.draggable.push(convRelu);
-    // svgData.draggable.push(denseRelu);
 }
 
 export function blankTemplate(svgData: IDraggableData): void {
@@ -240,14 +209,11 @@ export function mlpTemplate(svgData: IDraggableData): void {
 
     const dense0Pos = new Point(width * 2 / 6.5, height / 2.48);
     const dense1Pos = new Point(width * 3 / 6.5, height / 2.48);
-    const dense2Pos = new Point(width * 4 / 6.5, height / 2.48);
 
     const dense0: ActivationLayer = new Dense(dense0Pos);
     const dense1: ActivationLayer = new Dense(dense1Pos);
-    const dense2: ActivationLayer = new Dense(dense2Pos);
     const dense0Relu: Activation = new Relu(dense0Pos);
     const dense1Relu: Activation = new Relu(dense1Pos);
-    const dense2Softmax: Activation = new Softmax(dense2Pos);
 
     // Add relationships among layers and activations
     svgData.input.addChild(dense0);
@@ -255,18 +221,13 @@ export function mlpTemplate(svgData: IDraggableData): void {
     dense0.addChild(dense1);
     
     dense1.addActivation(dense1Relu);
-    dense1.addChild(dense2);
-
-    dense2.addActivation(dense2Softmax);
-    dense2.addChild(svgData.output);
+    dense1.addChild(svgData.output);
 
     // Store the new network
     svgData.draggable.push(dense0);
     svgData.draggable.push(dense1);
-    svgData.draggable.push(dense2);
     svgData.draggable.push(dense0Relu);
     svgData.draggable.push(dense1Relu);
-    svgData.draggable.push(dense2Softmax);
 }
 
 export function cnnTemplate(svgData: IDraggableData): void {

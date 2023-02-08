@@ -1,56 +1,12 @@
 import * as tf from "@tensorflow/tfjs";
 import * as tfvis from "@tensorflow/tfjs-vis";
 import { tabSelected } from "../ui/app";
-import { dataset } from "./data";
+import { testX, testY } from "./data";
 import { model } from "./params_object";
 
 const GRAPH_FONT_SIZE: number = 14;
-const NUM_CLASSES: number = 10;
+const NUM_CLASSES: number = 4;
 
-const testExamples: number = 50;
-
-/**
- * Show predictions on a number of test examples.
- */
-export async function showPredictions(): Promise<void> {
-  if (tabSelected() === "visualizationTab" && dataset.dataLoaded) {
-    let label: string = null;
-    const options = document.getElementById("classes").getElementsByClassName("option");
-    for (const option of options) {
-        if (option.classList.contains("selected")) {
-            label = option.getAttribute("data-optionValue");
-            break;
-        }
-    }
-
-    dataset.getTestDataWithLabel(testExamples, label).then(({xs, labels}) => {
-      // Code wrapped in a tf.tidy() function callback will have their tensors freed
-      // from GPU memory after execution without having to call dispose().
-      // The tf.tidy callback runs synchronously.
-      tf.tidy(() => {
-        const output = model.architecture.predict(xs) as tf.Tensor<tf.Rank.R1>;
-
-        // tf.argMax() returns the indices of the maximum values in the tensor along
-        // a specific axis. Categorical classification tasks like this one often
-        // represent classes as one-hot vectors. One-hot vectors are 1D vectors with
-        // one element for each output class. All values in the vector are 0
-        // except for one, which has a value of 1 (e.g. [0, 0, 0, 1, 0]). The
-        // output from model.predict() will be a probability distribution, so we use
-        // argMax to get the index of the vector element that has the highest
-        // probability. This is our prediction.
-        // (e.g. argmax([0.07, 0.1, 0.03, 0.75, 0.05]) == 3)
-        // dataSync() synchronously downloads the tf.tensor values from the GPU so
-        // that we can use them in our normal CPU JavaScript code
-        // (for a non-blocking version of this function, use data()).
-        const axis = 1;
-        const newLabels = Array.from(labels.argMax(axis).dataSync());
-        const predictions = Array.from(output.argMax(axis).dataSync());
-
-        showTestResults({xs, labels}, predictions, newLabels);
-      });
-    });
-  }
-}
 
 // TOOD: Remove this peice of problematic global state.
 let confusionValues: any = [];
@@ -61,12 +17,11 @@ for (let i = 0; i < NUM_CLASSES; i++) {
 }
 
 export function showConfusionMatrix(): void {
-  if (tabSelected() === "progressTab" && dataset.dataLoaded) {
-    const {xs, labels} = dataset.getTestData(1000);
+  if (tabSelected() === "progressTab" && testX != undefined) {
     tf.tidy(() => {
-      const output = model.architecture.predict(xs) as tf.Tensor<tf.Rank.R1>;
+      const output = model.architecture.predict(testX) as tf.Tensor<tf.Rank.R1>;
 
-      const fixedLabels = labels.argMax(1) as tf.Tensor<tf.Rank.R1>;
+      const fixedLabels = testY.argMax(1) as tf.Tensor<tf.Rank.R1>;
       const predictions = output.argMax(1) as tf.Tensor<tf.Rank.R1>;
 
       tfvis.metrics.confusionMatrix(fixedLabels, predictions, NUM_CLASSES).then((confusionVals) => {
@@ -77,64 +32,6 @@ export function showConfusionMatrix(): void {
     });
   }
 
-}
-
-export function setupTestResults(): void {
-  const imagesElement = document.getElementById("images");
-  imagesElement.innerHTML = "";
-  for (let i = 0; i < testExamples; i++) {
-    const div = document.createElement("div");
-    div.className = "pred-container";
-
-    const canvas = document.createElement("canvas");
-    canvas.width = dataset.IMAGE_WIDTH;
-    canvas.height = dataset.IMAGE_HEIGHT;
-    canvas.className = "prediction-canvas";
-    const ctx = canvas.getContext("2d");
-    ctx.rect(0, 0, 1000, 5000);
-    ctx.fillStyle = "#888";
-    ctx.fill();
-
-    const pred = document.createElement("div");
-    pred.className = `pred pred-none`;
-    pred.innerText = `pred: -`;
-
-    div.appendChild(pred);
-    div.appendChild(canvas);
-
-    imagesElement.appendChild(div);
-  }
-}
-
-export function showTestResults(batch: {xs: tf.Tensor<tf.Rank.R4>, labels: tf.Tensor<tf.Rank.R2>},
-                                predictions: number[],
-                                labels: number[]): void {
-  const imagesElement = document.getElementById("images");
-  imagesElement.innerHTML = "";
-  for (let i = 0; i < testExamples; i++) {
-    const image = batch.xs.slice([i, 0], [1, batch.xs.shape[1]]);
-
-    const div = document.createElement("div");
-    div.className = "pred-container";
-
-    const canvas = document.createElement("canvas");
-    canvas.className = "prediction-canvas";
-    draw(image.flatten(), canvas);
-
-    const pred = document.createElement("div");
-
-    const prediction = predictions[i];
-    const label = labels[i];
-    const correct = prediction === label;
-
-    pred.className = `pred ${(correct ? "pred-correct" : "pred-incorrect")}`;
-    pred.innerText = `pred: ${prediction}`;
-
-    div.appendChild(pred);
-    div.appendChild(canvas);
-
-    imagesElement.appendChild(div);
-  }
 }
 
 // TOOD: Remove this piece of problematic global state.
@@ -155,7 +52,7 @@ export function renderLossPlot(): void {
   const lossContainer = document.getElementById("loss-canvas");
   tfvis.render.linechart(
       {values: lossValues, series: ["train", "validation"]}, lossContainer, {
-        xLabel: "Batch #",
+        xLabel: "Epoch #",
         yLabel: "Loss",  // tslint:disable-next-line: object-literal-sort-keys
         width: canvasWidth() / 2,
         height: canvasHeight() / 2,
@@ -183,7 +80,7 @@ export function renderAccuracyPlot(): void {
   tfvis.render.linechart(
       {values: accuracyValues, series: ["train", "validation"]},
       accuracyContainer, {
-        xLabel: "Batch #",
+        xLabel: "Epoch #",
         yLabel: "Accuracy",  // tslint:disable-next-line: object-literal-sort-keys
         width: canvasWidth() / 2,
         height: canvasHeight() / 2,
@@ -195,7 +92,7 @@ export function renderAccuracyPlot(): void {
 function renderConfusionMatrix(): void {
   const confusionMatrixElement = document.getElementById("confusion-matrix-canvas");
   tfvis.render.confusionMatrix({
-    labels: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
+    labels: ["0", "1", "2", "3"],
     values: confusionValues ,
   }, confusionMatrixElement, {
     fontSize: GRAPH_FONT_SIZE,
@@ -218,29 +115,4 @@ export function setupPlots(): void {
   renderLossPlot();
   renderAccuracyPlot();
   renderConfusionMatrix();
-}
-
-export function draw(image: tf.Tensor, canvas: HTMLCanvasElement): void {
-  const [width, height] = [dataset.IMAGE_HEIGHT, dataset.IMAGE_WIDTH];
-  canvas.width = width;
-  canvas.height = height;
-  const ctx = canvas.getContext("2d");
-  const imageData = new ImageData(width, height);
-  const data = image.dataSync();
-  for (let i = 0; i < height * width; ++i) {
-    const j = i * 4;
-    if (dataset.IMAGE_CHANNELS === 3) {
-      const k = i * 3;
-      imageData.data[j + 0] = data[k + 0] * 255;
-      imageData.data[j + 1] = data[k + 1] * 255;
-      imageData.data[j + 2] = data[k + 2] * 255;
-      imageData.data[j + 3] = 255;
-    } else {
-      imageData.data[j + 0] = data[i] * 255;
-      imageData.data[j + 1] = data[i] * 255;
-      imageData.data[j + 2] = data[i] * 255;
-      imageData.data[j + 3] = 255;
-    }
-  }
-  ctx.putImageData(imageData, 0, 0);
 }

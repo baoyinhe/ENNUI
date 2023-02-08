@@ -7,7 +7,7 @@ import { Point, Rectangle } from "../shape";
 
 export class Output extends ActivationLayer {
     public layerType: string = "Output";
-    public parameterDefaults: { [key: string]: any } = {units: 10, activation: "softmax"};
+    public parameterDefaults: { [key: string]: any } = {units: 4, activation: "softmax"};
     public readonly tfjsEmptyLayer: any = tf.layers.dense ;
     public readonly outputWiresAllowed: boolean = false;
     public readonly wireGuidePresent: boolean = false;
@@ -30,11 +30,11 @@ export class Output extends ActivationLayer {
     public populateParamBox(): void {return; }
 
     public lineOfPython(): string {
-        return `Dense(10, activation='softmax')`;
+        return `Dense(4, activation='softmax')`;
     }
 
     public initLineOfJulia(): string {
-        let init = `x${this.uid} = insert!(net, (shape) -> Dense(shape[1], 10))\n`;
+        let init = `x${this.uid} = insert!(net, (shape) -> Dense(shape[1], 4))\n`;
         if (this.juliaFinalLineId == null) {
             this.juliaFinalLineId = Layer.getNextID();
         }

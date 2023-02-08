@@ -1,7 +1,6 @@
 import * as tf from "@tensorflow/tfjs";
 import * as d3 from "d3";
 import { generateTfjsModel, topologicalSort } from "../../model/build_network";
-import { changeDataset } from "../../model/data";
 import { svgData } from "../app";
 import { displayError } from "../error";
 import { parseString } from "../utils";
@@ -301,9 +300,6 @@ export abstract class Layer extends Draggable {
 
     public layerShape(): number[] {
         // Computes all of the predecessors to determine shape
-        if (this.layerType === "Input") {
-            changeDataset(svgData.input.getParams().dataset);
-        }
         try {
             generateTfjsModel(topologicalSort(svgData.input, false));
             return this.getTfjsLayer().shape;

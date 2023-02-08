@@ -1,12 +1,12 @@
 import * as d3 from "d3";
 import { buildNetworkDAG, topologicalSort } from "../model/build_network";
 import { generatePython } from "../model/code_generation";
-import { changeDataset } from "../model/data";
 import { download } from "../model/export_model";
 import { setupPlots } from "../model/graphs";
-import { train } from "../model/mnist_model";
+import { train } from "../model/model";
 import { model } from "../model/params_object";
 import { loadStateIfPossible } from "../model/save_state_url";
+import { changeNetworkType, NetType } from "../model/model";
 import { clearError, displayError } from "./error";
 import { blankTemplate, cnnTemplate, mlpTemplate } from "./model_templates";
 import { Activation, Relu, Sigmoid, Tanh } from "./shapes/activation";
@@ -138,8 +138,8 @@ function selectOption(optionCategoryId: string, optionElement: HTMLElement): voi
 function createTemplate(template: string): void {
     switch (template) {
         case "blank": blankTemplate(svgData); break;
-        case "mlp": mlpTemplate(svgData); break;
-        case "cnn": cnnTemplate(svgData); break;
+        case "mlp": mlpTemplate(svgData); changeNetworkType(NetType.mlp); break;
+        case "cnn": cnnTemplate(svgData); changeNetworkType(NetType.cnn);break;
 
     }
 }
@@ -164,20 +164,9 @@ function appendItem(itemType: string): void {
 
 function setupIndividualOnClicks(): void {
     document.getElementById("exportPython").addEventListener("click", () => {
-        changeDataset(svgData.input.getParams().dataset);
-        const filename = svgData.input.getParams().dataset + "_model.py";
+        const filename = "model.py";
         download(generatePython(topologicalSort(svgData.input)), filename);
     });
-
-    // document.getElementById("exportJulia").addEventListener("click", () => {
-    //     changeDataset(svgData.input.getParams().dataset);
-    //     if (svgData.input.getParams().dataset === "cifar") {
-    //         displayError(new Error("Julia Export does not support CIFAR10, use MNIST instead."));
-    //     } else {
-    //         const filename = svgData.input.getParams().dataset + "_model.jl";
-    //         download(generateJulia(topologicalSort(svgData.input)), filename);
-    //     }
-    // });
 
     document.getElementById("train").addEventListener("click", trainOnClick);
 
@@ -207,8 +196,6 @@ async function trainOnClick(): Promise<void> {
     const training = document.getElementById("train");
     if (!training.classList.contains("train-active")) {
         clearError();
-
-        changeDataset(svgData.input.getParams().dataset); // TODO change dataset should happen when the dataset changes
 
         // Grab hyperparameters
         setModelHyperparameters();

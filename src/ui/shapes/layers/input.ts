@@ -1,8 +1,9 @@
 import * as tf from "@tensorflow/tfjs";
-import { dataset } from "../../../model/data";
+import { SAMPLES_PER_GESTURE, COLLECT_DATA_NUM} from "../../../model/data";
 import { getSvgOriginalBoundingBox } from "../../utils";
 import { Layer } from "../layer";
 import { Point, Rectangle } from "../shape";
+import { networkType, NetType } from "../../../model/model";
 
 export class Input extends Layer {
     public layerType: string = "Input";
@@ -25,44 +26,60 @@ export class Input extends Layer {
     public populateParamBox(): void {
         // Dataset input box
         // TODO: separate this logic out.
-        const line = document.createElement("div");
-        line.className = "paramline selectline";
+        // const line = document.createElement("div");
+        // line.className = "paramline selectline";
 
-        const name = document.createElement("div");
-        name.className = "paramname";
-        name.innerHTML = "Dataset:";
-        name.setAttribute("data-name", "dataset");
+        // const name = document.createElement("div");
+        // name.className = "paramname";
+        // name.innerHTML = "Shape:";
+        // name.setAttribute("data-name", "dataset");
 
-        const selectDiv = document.createElement("div");
-        selectDiv.className = "select";
+        // const selectDiv = document.createElement("div");
+        // selectDiv.className = "select";
 
-        const arrow = document.createElement("div");
-        arrow.className = "select__arrow";
+        // const arrow = document.createElement("div");
+        // arrow.className = "select__arrow";
 
-        const select = document.createElement("select");
-        select.className = "parameter-select";
+        // const select = document.createElement("select");
+        // select.className = "parameter-select";
 
-        for (const value of [["mnist", "MNIST"], ["cifar", "Cifar-10"]]) {
-            const option = document.createElement("option");
-            option.value = value[0];
-            option.innerHTML = value[1];
-            select.appendChild(option);
-        }
+        // for (const value of [["mnist", "MNIST"], ["cifar", "Cifar-10"]]) {
+        //     const option = document.createElement("option");
+        //     option.value = value[0];
+        //     option.innerHTML = value[1];
+        //     select.appendChild(option);
+        // }
 
-        line.appendChild(name);
-        line.appendChild(selectDiv);
-        selectDiv.appendChild(select);
-        selectDiv.appendChild(arrow);
-        this.paramBox.append(line);
-        this.focusing();
+        // line.appendChild(name);
+        // line.appendChild(selectDiv);
+        // selectDiv.appendChild(select);
+        // selectDiv.appendChild(arrow);
+        // this.paramBox.append(line);
+        // this.focusing();
     }
 
     public generateTfjsLayer(): void {
         // TODO make this a member variable
-        this.tfjsLayer = this.tfjsEmptyLayer({shape: [
-            dataset.IMAGE_HEIGHT,
-            dataset.IMAGE_WIDTH,
-            dataset.IMAGE_CHANNELS]});
+        switch (networkType) {
+            case NetType.mlp:
+                this.tfjsLayer = this.tfjsEmptyLayer({
+                    shape: [
+                        SAMPLES_PER_GESTURE * COLLECT_DATA_NUM]
+                });
+                break;
+            case NetType.cnn:
+                this.tfjsLayer = this.tfjsEmptyLayer({
+                    shape: [
+                        SAMPLES_PER_GESTURE, COLLECT_DATA_NUM, 1]
+                });
+                break;
+            case NetType.rnn:
+                this.tfjsLayer = this.tfjsEmptyLayer({
+                    shape: [
+                        SAMPLES_PER_GESTURE, COLLECT_DATA_NUM]
+                });
+                break;
+        }
     }
 
     public lineOfPython(): string {

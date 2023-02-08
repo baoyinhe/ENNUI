@@ -15,7 +15,7 @@ class NetworkParameters {
     public batchSize: number = 64;
     public optimizer: string = "sgd";
     public epochs: number = 6;
-    public loss: string = "sparse_categorical_crossentropy";
+    public loss: string = "categoricalCrossentropy";
     private paramNames: Set<string> = new Set(["optimizer", "loss"]);
 
     public isParam(param: string): boolean {
