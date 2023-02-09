@@ -377,6 +377,11 @@ div.top_neighbor_tab-selected {
     background: #e3e3eE;
 }
 
+#datacollectionTab {
+    width: 100%;
+    height: 100%;
+}
+
 #networkTab {
     width: 100%;
     height: 100%;
@@ -710,7 +715,7 @@ label {
 
   .xterm {
     cursor: text;
-    position: relative;
+    // position: relative;
     user-select: none;
     -ms-user-select: none;
     -webkit-user-select: none;

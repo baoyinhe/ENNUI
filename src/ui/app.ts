@@ -95,6 +95,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // 加载默认网络模型
     svgData = loadStateIfPossible();
 
+    // 自动跳转到数据采集页面，否则终端可能有bug
+    document.getElementById("datacollection").click();
+
     // Select the input block when we load the page
     // svgData.input.select();
 
