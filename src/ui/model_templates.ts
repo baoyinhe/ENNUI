@@ -1,5 +1,5 @@
 import { IDraggableData } from "./app";
-import { Activation, Relu, Softmax } from "./shapes/activation";
+import { Activation, Relu } from "./shapes/activation";
 import { ActivationLayer } from "./shapes/activationlayer";
 import { Layer } from "./shapes/layer";
 import { Add } from "./shapes/layers/add";
@@ -210,8 +210,10 @@ export function mlpTemplate(svgData: IDraggableData): void {
     const dense0Pos = new Point(width * 2 / 6.5, height / 2.48);
     const dense1Pos = new Point(width * 3 / 6.5, height / 2.48);
 
-    const dense0: ActivationLayer = new Dense(dense0Pos);
-    const dense1: ActivationLayer = new Dense(dense1Pos);
+    const dense0: Dense = new Dense(dense0Pos);
+    dense0.setLayerParams(32);
+    const dense1: Dense = new Dense(dense1Pos);
+    dense1.setLayerParams(16);
     const dense0Relu: Activation = new Relu(dense0Pos);
     const dense1Relu: Activation = new Relu(dense1Pos);
 
@@ -247,22 +249,27 @@ export function cnnTemplate(svgData: IDraggableData): void {
     const flattenPos = new Point(width * 3 / 8, height / 2);
     const dense0Pos = new Point(width * 4 / 8, height / 2.2);
     const dropout2Pos = new Point(width * 4.8 / 8, height / 2.7);
-    const dense1Pos = new Point(width * 6 / 8, height / 2.2);
 
-    const conv0: ActivationLayer = new Conv2D(conv0Pos);
+    const conv0: Conv2D = new Conv2D(conv0Pos);
+    conv0.setLayerParams(8, [4, 3]);
     const conv0Relu: Activation = new Relu(conv0Pos);
     const maxpool0: MaxPooling2D = new MaxPooling2D(maxpool0Pos);
+    maxpool0.setLayerParams([3, 3], [3, 3]);
     const droupout0: Dropout = new Dropout(dropout0Pos);
-    const conv1: ActivationLayer = new Conv2D(conv1Pos);
+    droupout0.setLayerParams(0.1);
+    const conv1: Conv2D = new Conv2D(conv1Pos);
+    conv1.setLayerParams(16, [4, 1]);
     const conv1Relu: Activation = new Relu(conv1Pos);
     const maxpool1: MaxPooling2D = new MaxPooling2D(maxpool1Pos);
+    maxpool1.setLayerParams([3, 1], [3, 1]);
     const droupout1: Dropout = new Dropout(dropout1Pos);
+    droupout1.setLayerParams(0.1);
     const flat: Flatten = new Flatten(flattenPos);
-    const dense0: ActivationLayer = new Dense(dense0Pos);
+    const dense0: Dense = new Dense(dense0Pos);
+    dense0.setLayerParams(16);
     const dense0Relu: Activation = new Relu(dense0Pos);
     const droupout2: Dropout = new Dropout(dropout2Pos);
-    const dense1: ActivationLayer = new Dense(dense1Pos);
-    const dense1Softmax: Activation = new Softmax(dense1Pos);
+    droupout2.setLayerParams(0.1);
     
 
     // Add relationships among layers and activations
@@ -280,9 +287,7 @@ export function cnnTemplate(svgData: IDraggableData): void {
     flat.addChild(dense0);
     dense0.addActivation(dense0Relu);
     dense0.addChild(droupout2);
-    droupout2.addChild(dense1);
-    dense1.addActivation(dense1Softmax);
-    dense1.addChild(svgData.output);
+    droupout2.addChild(svgData.output);
 
     // Store the new network
     svgData.draggable.push(conv0);
@@ -297,6 +302,4 @@ export function cnnTemplate(svgData: IDraggableData): void {
     svgData.draggable.push(dense0);
     svgData.draggable.push(dense0Relu);
     svgData.draggable.push(droupout2);
-    svgData.draggable.push(dense1);
-    svgData.draggable.push(dense1Softmax);
 }

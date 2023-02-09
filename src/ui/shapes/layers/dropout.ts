@@ -33,6 +33,12 @@ export class Dropout extends Layer {
         this.focusing();
     }
 
+    public setLayerParams(rate = 0.5): void {
+        const line1 = this.paramBox.children[0];
+        let ele = line1.lastChild as HTMLInputElement;
+        ele.value = String(rate);
+    }
+
     public getHoverText(): string { return "Dropout"; }
 
     public lineOfPython(): string {

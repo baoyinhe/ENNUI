@@ -38,6 +38,12 @@ export class BatchNorm extends ActivationLayer {
         this.focusing();
     }
 
+    public setLayerParams(momentum = 0.99): void {
+        const line1 = this.paramBox.children[0];
+        let ele = line1.lastChild as HTMLInputElement;
+        ele.value = String(momentum);
+}
+
     public getHoverText(): string { return "BatchNorm"; }
 
     public lineOfPython(): string {

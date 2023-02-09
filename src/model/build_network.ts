@@ -20,7 +20,7 @@ export function buildNetworkDAG(input: Input): tf.LayersModel {
 function networkDAG(toposorted: Layer[]): tf.LayersModel {
     const model = generateTfjsModel(toposorted);
     // tslint:disable-next-line:no-console
-    console.log(model.summary());
+    model.summary();
     return model;
 }
 

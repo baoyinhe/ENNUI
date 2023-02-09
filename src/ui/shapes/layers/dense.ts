@@ -26,6 +26,12 @@ export class Dense extends ActivationLayer {
         this.paramBox.append(line);
         this.focusing();
     }
+    
+    public setLayerParams(units: number = 32): void {
+        const unitsline = this.paramBox.children[0];
+        let ele = unitsline.lastChild as HTMLInputElement;
+        ele.value = String(units);
+    }
 
     public getHoverText(): string { return "Dense"; }
 
