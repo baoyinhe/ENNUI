@@ -27,6 +27,7 @@ import { TextBox } from "./shapes/textbox";
 import { WireGuide } from "./shapes/wireguide";
 import { windowProperties } from "./window";
 import { setupSerial } from './serial';
+import { loadDataUrl } from '../model/data';
 
 
 export interface IDraggableData {
@@ -166,6 +167,11 @@ function appendItem(itemType: string): void {
 }
 
 function setupIndividualOnClicks(): void {
+    document.getElementById("negativeInput").addEventListener("change", () => { loadDataUrl("negativeUrl"); });
+    document.getElementById("punchInput").addEventListener("change", () => { loadDataUrl("punchUrl"); });
+    document.getElementById("wingInput").addEventListener("change", () => { loadDataUrl("wingUrl"); });
+    document.getElementById("ringInput").addEventListener("change", () => { loadDataUrl("ringUrl"); });
+
     document.getElementById("exportPython").addEventListener("click", () => {
         const filename = "model.py";
         download(generatePython(topologicalSort(svgData.input)), filename);

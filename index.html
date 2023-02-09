@@ -5,20 +5,6 @@
 	<meta name="description" content="Welcome to ENNUI - An elegant neural network user interface which allows you to easily design, train, and visualize neural networks.">
 	<title>ENNUI ~ Elegant Neural Network User Interface ~</title>
 
-	<style>
-
-		#terminal {
-			width : 100%;
-			height: 100%;
-		}
-    .options {
-      padding: 0.75em;
-    }
-    #connect {
-      margin-right: 2em;
-    }
-	</style>
-
 	<!-- MathJax cdn to render latex -->
 	<script type="text/javascript" async
 		src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
@@ -50,7 +36,7 @@
 	</script>
 
 	<!-- Global site tag (gtag.js) - Google Analytics -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-133726432-1"></script>
+	<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=UA-133726432-1"></script> -->
 
 	<script>
 		window.dataLayer = window.dataLayer || [];
@@ -102,22 +88,21 @@
 	<!-- The left panel (menu) -->
 	<div id = 'menu'>
 		<div id = 'datacollectionMenu' style="display: none">
-			<!-- // TODO -->
-			<div class="options">
+			<div class="serial-options">
 				<label for="ports">端口:</label>
-				<select id="ports">
+				<select id="ports" class="droupdown">
 				  <option value="prompt">点击'刷新'刷新端口...</option>
 				</select>
-				<button id="refresh">刷新</button>
-				<button id="connect">连接</button>
+				<button id="refresh" class="serial-button">刷新</button>
+				<button id="connect" class="serial-button">连接</button>
 			  
-				<button id="download">下载输出</button>
-				<button id="clear">清空输出</button>
+				<button id="download" class="serial-button">下载输出</button>
+				<button id="clear" class="serial-button">清空输出</button>
 			  
 				<br>
 			  
 				<label for="baudrate">波特率:</label>
-				<select id="baudrate">
+				<select id="baudrate" class="droupdown">
 				  <option value="9600">9600</option>
 				  <option value="14400">14400</option>
 				  <option value="19200">19220</option>
@@ -130,16 +115,40 @@
 				  <option value="921600">921600</option>
 				</select>
 				<label for="databits">数据位:</label>
-        <select id="databits">
+        <select id="databits" class="droupdown">
             <option value="7">7</option>
             <option value="8" selected>8</option>
         </select>
         <label for="stopbits">停止位:</label>
-        <select id="stopbits">
+        <select id="stopbits" class="droupdown">
             <option value="1" selected>1</option>
             <option value="2">2</option>
         </select>
 			</div>
+	
+			<div class = 'datafile'>
+				<div id='negative'>
+					<label class="datachoose-label">导入负样本:</label>
+					<input id='negativeInput' type='file' class='inputfile' name='negativeInput' accept=".csv, .txt">
+					<input id='negativeFile' type='text' class='selectedfile'>
+				</div>
+				<div id='punch'>
+					<label class="datachoose-label">导入手势1样本:</label>
+					<input id='punchInput' type='file' class='inputfile' name='punchInput' accept=".csv, .txt">
+					<input id='punchFile' type='text' class='selectedfile'>
+				</div>
+				<div id='wing'>
+					<label class="datachoose-label">导入手势2样本:</label>
+					<input id='wingInput' type='file' class='inputfile' name='wingInput' accept=".csv, .txt">
+					<input id='wingFile' type='text' class='selectedfile'>
+				</div>
+				<div id='ring'>
+					<label class="datachoose-label">导入手势3样本:</label>
+					<input id='ringInput' type='file' class='inputfile' name='ringInput' accept=".csv, .txt">
+					<input id='ringFile' type='text' class='selectedfile'>
+				</div>
+			</div>
+
 		</div>
 
 		<div id = 'networkMenu'>
