@@ -11,10 +11,10 @@ export interface IHyperparameterData {
 }
 
 class NetworkParameters {
-    public learningRate: number = 0.01;
-    public batchSize: number = 64;
+    public learningRate: number = 0.001;
+    public batchSize: number = 32;
     public optimizer: string = "sgd";
-    public epochs: number = 6;
+    public epochs: number = 100;
     public loss: string = "categoricalCrossentropy";
     private paramNames: Set<string> = new Set(["optimizer", "loss"]);
 

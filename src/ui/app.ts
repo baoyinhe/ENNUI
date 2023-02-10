@@ -28,6 +28,9 @@ import { WireGuide } from "./shapes/wireguide";
 import { windowProperties } from "./window";
 import { setupSerial } from './serial';
 import { loadDataUrl } from '../model/data';
+import { term } from './serial';
+
+var spawn = require("child_process").spawn;
 
 
 export interface IDraggableData {
@@ -175,6 +178,27 @@ function setupIndividualOnClicks(): void {
     document.getElementById("exportPython").addEventListener("click", () => {
         const filename = "model.py";
         download(generatePython(topologicalSort(svgData.input)), filename);
+    });
+
+    document.getElementById("exportTflite").addEventListener("click", () => {
+        var result = spawn("cmd.exe", ["/s", "/c", "tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras D:/my-model.json D:/keras_model.h5 && tflite_convert --keras_model_file=D:/keras_model.h5 --output_file=D:/model.tflite"]);
+        //输出正常情况下的控制台信息
+        result.stdout.on("data", function (data: string) {
+            term.writeln(data);
+        });
+        //输出报错信息
+        result.stderr.on("data", function (data: string) {
+            term.writeln(`ERROR: ${data}`);
+        });
+        //当程序执行完毕后的回调，那个code一般是0
+        result.on("exit", function (code: any) {
+            if (code === 0) {
+                confirm("导出成功！")
+            } else {
+                alert("导出失败！")
+            }
+            term.writeln("Exited with code " + code);
+        });
     });
 
     document.getElementById("train").addEventListener("click", trainOnClick);

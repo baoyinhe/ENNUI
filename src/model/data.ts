@@ -29,7 +29,7 @@ export function loadDataUrl(dataType: string): void {
       selectedfile = document.getElementById("negativeFile") as HTMLInputElement;
       selectedfile.value = filePath;
       negativeUrl = selectedfile.value;
-      console.log('negativeUrl:' + `${negativeUrl}`);
+      // console.log('negativeUrl:' + `${negativeUrl}`);
       break;
     case "punchUrl":
       fileObj = (document.getElementsByName("punchInput")[0] as any).files[0];
@@ -37,7 +37,7 @@ export function loadDataUrl(dataType: string): void {
       selectedfile = document.getElementById("punchFile") as HTMLInputElement;
       selectedfile.value = filePath;
       punchUrl = selectedfile.value;
-      console.log('punchUrl:' + `${punchUrl}`);
+      // console.log('punchUrl:' + `${punchUrl}`);
       break;
     case "wingUrl":
       fileObj = (document.getElementsByName("wingInput")[0] as any).files[0];
@@ -45,7 +45,7 @@ export function loadDataUrl(dataType: string): void {
       selectedfile = document.getElementById("wingFile") as HTMLInputElement;
       selectedfile.value = filePath;
       wingUrl = selectedfile.value;
-      console.log('wingUrl:' + `${wingUrl}`);
+      // console.log('wingUrl:' + `${wingUrl}`);
       break;
     case "ringUrl":
       fileObj = (document.getElementsByName("ringInput")[0] as any).files[0];
@@ -53,7 +53,7 @@ export function loadDataUrl(dataType: string): void {
       selectedfile = document.getElementById("ringFile") as HTMLInputElement;
       selectedfile.value = filePath;
       ringUrl = selectedfile.value;
-      console.log('ringUrl:' + `${ringUrl}`);
+      // console.log('ringUrl:' + `${ringUrl}`);
       break;
   }
 }
@@ -130,6 +130,8 @@ export function getTrainData(): [trainX: tf.Tensor, trainY: tf.Tensor, testX: tf
   testY = tf.concat([ntestY, ptestY, wtestY, rtestY], 0);
 
   switch (networkType) {
+    case NetType.mlp:
+      break;
     case NetType.cnn:
       trainX = trainX.reshape([trainX.shape[0], SAMPLES_PER_GESTURE, COLLECT_DATA_NUM, 1]);
       testX = testX.reshape([testX.shape[0], SAMPLES_PER_GESTURE, COLLECT_DATA_NUM, 1]);

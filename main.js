@@ -9,24 +9,24 @@ function createWindow () {
   }
   })
 
-  const menu = Menu.buildFromTemplate([
-    {
-      label: app.name,
-      submenu: [
-      {
-        click: () => mainWindow.webContents.send('update-counter', 1),
-        label: 'Increment',
-      },
-      {
-        click: () => mainWindow.webContents.send('update-counter', -1),
-        label: 'Decrement',
-      }
-      ]
-    }
+  // const menu = Menu.buildFromTemplate([
+  //   {
+  //     label: app.name,
+  //     submenu: [
+  //     {
+  //       click: () => mainWindow.webContents.send('update-counter', 1),
+  //       label: 'Increment',
+  //     },
+  //     {
+  //       click: () => mainWindow.webContents.send('update-counter', -1),
+  //       label: 'Decrement',
+  //     }
+  //     ]
+  //   }
 
-  ])
+  // ])
 
-  Menu.setApplicationMenu(menu)
+  // Menu.setApplicationMenu(menu)
   mainWindow.loadFile('index.html')
 
   // Open the DevTools.

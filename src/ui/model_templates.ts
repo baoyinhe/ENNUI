@@ -251,14 +251,14 @@ export function cnnTemplate(svgData: IDraggableData): void {
     const dropout2Pos = new Point(width * 4.8 / 8, height / 2.7);
 
     const conv0: Conv2D = new Conv2D(conv0Pos);
-    conv0.setLayerParams(8, [4, 3]);
+    conv0.setLayerParams(8, [3, 3]);
     const conv0Relu: Activation = new Relu(conv0Pos);
     const maxpool0: MaxPooling2D = new MaxPooling2D(maxpool0Pos);
     maxpool0.setLayerParams([3, 3], [3, 3]);
     const droupout0: Dropout = new Dropout(dropout0Pos);
     droupout0.setLayerParams(0.1);
     const conv1: Conv2D = new Conv2D(conv1Pos);
-    conv1.setLayerParams(16, [4, 1]);
+    conv1.setLayerParams(16, [3, 1]);
     const conv1Relu: Activation = new Relu(conv1Pos);
     const maxpool1: MaxPooling2D = new MaxPooling2D(maxpool1Pos);
     maxpool1.setLayerParams([3, 1], [3, 1]);
