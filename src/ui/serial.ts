@@ -15,7 +15,7 @@ let stopBitsSelector: HTMLSelectElement;
 
 let port: SerialPort | undefined;
 
-const term = new Terminal({
+export const term = new Terminal({
   scrollback: 10_000,
 });
 const fitAddon = new FitAddon();

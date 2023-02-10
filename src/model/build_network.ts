@@ -3,6 +3,7 @@ import * as tf from "@tensorflow/tfjs";
 import { displayError } from "../ui/error";
 import { Layer } from "../ui/shapes/layer";
 import { Input } from "../ui/shapes/layers/input";
+import { term } from "../ui/serial";
 
 /**
  * Wrap errors from networkDAG
@@ -20,7 +21,9 @@ export function buildNetworkDAG(input: Input): tf.LayersModel {
 function networkDAG(toposorted: Layer[]): tf.LayersModel {
     const model = generateTfjsModel(toposorted);
     // tslint:disable-next-line:no-console
-    model.summary();
+    model.summary(undefined, undefined, (mess) => {
+        term.writeln(mess);
+    })
     return model;
 }
 
