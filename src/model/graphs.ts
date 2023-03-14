@@ -39,9 +39,9 @@ let lossValues: Array<Array<{x: number, y: number}>> = [[], []];
 export function plotLoss(batchNum: number, loss: number, set: string): void {
   const series = set === "train" ? 0 : 1;
   // Set the first validation loss as the first training loss
-  if (series === 0 && lossValues[1].length === 0) {
-    lossValues[1].push({x: batchNum, y: loss});
-  }
+  // if (series === 0 && lossValues[1].length === 0) {
+  //   lossValues[1].push({x: batchNum, y: loss});
+  // }
   lossValues[series].push({x: batchNum, y: loss});
   if (tabSelected() === "progressTab") {
     renderLossPlot();

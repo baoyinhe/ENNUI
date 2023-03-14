@@ -9,6 +9,7 @@ function createWindow () {
   }
   })
 
+  Menu.setApplicationMenu(null);
   // const menu = Menu.buildFromTemplate([
   //   {
   //     label: app.name,
