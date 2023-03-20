@@ -1,7 +1,7 @@
 import * as tf from "@tensorflow/tfjs";
 import { ActivationLayer } from "../activationlayer";
 import { Layer } from "../layer";
-import { PathShape, Point } from "../shape";
+import { Circle, Point } from "../shape";
 
 export class Dropout extends Layer {
     public layerType: string = "Dropout";
@@ -9,11 +9,7 @@ export class Dropout extends Layer {
     public readonly tfjsEmptyLayer: any = tf.layers.dropout;
 
     constructor(defaultLocation: Point = Point.randomPoint(100, 40, ActivationLayer.defaultInitialLocation)) {
-        super([new PathShape("M0 0 h60 v60 h-60 v-60 Z", "#99BCE0"),
-               new PathShape("M18 0 h4 v60 h-4 v-60 Z", "rgba(20, 20, 20, 0.2)"),
-               new PathShape("M38 0 h4 v60 h-4 v-60 Z", "rgba(20, 20, 20, 0.2)"),
-               new PathShape("M0 18 v4 h60 v-4 h-60 Z", "rgba(20, 20, 20, 0.2)"),
-               new PathShape("M0 38 v4 h60 v-4 h-60 Z", "rgba(20, 20, 20, 0.2)")], defaultLocation);
+        super([new Circle(new Point(0, 25), 20, "#ffffff", true)], defaultLocation);
     }
 
     public populateParamBox(): void {

@@ -10,9 +10,10 @@ export class MaxPooling2D extends Layer {
     public readonly tfjsEmptyLayer: any = tf.layers.maxPool2d;
 
     constructor(defaultLocation: Point = Point.randomPoint(100, 40, ActivationLayer.defaultInitialLocation)) {
-        super([new Rectangle(new Point(-44, -60), MaxPooling2D.blockSize, MaxPooling2D.blockSize, "#F76034"),
-               new Rectangle(new Point(-27, -40), MaxPooling2D.blockSize, MaxPooling2D.blockSize, "#F77134"),
-               new Rectangle(new Point(-10, -20), MaxPooling2D.blockSize, MaxPooling2D.blockSize, "#F78234")],
+        super([new Rectangle(new Point(-44, -60), MaxPooling2D.blockSize, MaxPooling2D.blockSize, "#ffaaaa"),
+               new Rectangle(new Point(-44, -30), MaxPooling2D.blockSize, MaxPooling2D.blockSize, "#986cc6"),
+               new Rectangle(new Point(-14, -60), MaxPooling2D.blockSize, MaxPooling2D.blockSize, "#dbd274"),
+               new Rectangle(new Point(-14, -30), MaxPooling2D.blockSize, MaxPooling2D.blockSize, "#729C62")],
                defaultLocation);
     }
 

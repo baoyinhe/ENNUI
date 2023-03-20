@@ -58,10 +58,12 @@ export class Rectangle extends Shape {
 export class Circle extends Shape {
     public radius: number;
     private outerShape: boolean;
+    private dotted: boolean;
 
-    constructor(location: Point, radius: number, color: string, outerShape: boolean = false) {
+    constructor(location: Point, radius: number, color: string, dotted: boolean = false, outerShape: boolean = false) {
         super(location, color);
         this.radius = radius;
+        this.dotted = dotted;
         this.outerShape = outerShape;
     }
 
@@ -73,6 +75,12 @@ export class Circle extends Shape {
                                      .style("fill", this.color)
                                      .style("cursor", "pointer");
 
+        if (this.dotted) {
+            this.svgComponent.style("stroke", "#000")
+                             .style("stroke-width", "2")
+                             .style("stroke-dasharray", "5,5");
+        }
+        
         if (this.outerShape) {
             this.svgComponent.attr("class", "outerShape");
         }

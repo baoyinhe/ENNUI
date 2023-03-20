@@ -8,7 +8,7 @@ export class Dense extends ActivationLayer {
     public readonly tfjsEmptyLayer: any = tf.layers.dense;
 
     constructor(defaultLocation: Point = Point.randomPoint(100, 40, ActivationLayer.defaultInitialLocation)) {
-        super([new PathShape("M-8 -90 h26 v100 h-8 v-10 h-10 v10 h-8 v-100 Z", "#F7473B")], defaultLocation);
+        super([new PathShape("M-8 -90 h26 v100 h-8 v-10 h-10 v10 h-8 v-100 Z", "#4b80c3")], defaultLocation);
     }
 
     public populateParamBox(): void {

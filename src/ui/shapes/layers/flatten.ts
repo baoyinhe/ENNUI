@@ -9,7 +9,7 @@ export class Flatten extends Layer {
     public readonly tfjsEmptyLayer: any  = tf.layers.flatten;
 
     constructor(defaultLocation: Point = Point.randomPoint(100, 40, ActivationLayer.defaultInitialLocation)) {
-        super([new PathShape("M-90 -90 h15 v-30 h15 v100 h-15 v-30 h-15 v-40 Z", "#AA222F")], defaultLocation);
+        super([new PathShape("M-90 -110 h15 l 15 100 h-15 Z", "#AA222F")], defaultLocation);
     }
 
     public populateParamBox(): void {return; }

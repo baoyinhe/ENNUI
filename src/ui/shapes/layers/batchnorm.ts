@@ -13,7 +13,7 @@ export class BatchNorm extends ActivationLayer {
     protected tfjsEmptyLayer: any  = tf.layers.batchNormalization;
 
     constructor(defaultLocation: Point = Point.randomPoint(100, 40, ActivationLayer.defaultInitialLocation)) {
-        super([new PathShape("M-10 -90 L 20 -60 v70 h-10 v-10 h-10 v10 h-10 v-100 Z", "#CFB53B")],
+        super([new PathShape("M-10 -20 h10 v-40 h30 v40 h10 v20 h-20 v-10 h-10 v10 h-20 v-20 Z", "#CFB53B")],
                defaultLocation);
     }
 
