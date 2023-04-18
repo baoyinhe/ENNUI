@@ -84,7 +84,7 @@ elif ${networkType} == 2:
     input_shape = (SAMPLES_PER_GESTURE, 6)
 
 
-############################# Architecture made by Ennui
+############################# Architecture
 ${modelCode}
 #############################
 
