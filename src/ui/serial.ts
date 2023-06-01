@@ -7,9 +7,9 @@ import { SerialPort } from 'serialport';
 let portSelector: HTMLSelectElement;
 let refreshButton: HTMLButtonElement;
 let connectButton: HTMLButtonElement;
-let baudRateSelector: HTMLSelectElement;
-let dataBitsSelector: HTMLSelectElement;
-let stopBitsSelector: HTMLSelectElement;
+// let baudRateSelector: HTMLSelectElement;
+// let dataBitsSelector: HTMLSelectElement;
+// let stopBitsSelector: HTMLSelectElement;
 // let paritySelector: HTMLSelectElement;
 // let flowControlCheckbox: HTMLInputElement;
 
@@ -63,26 +63,26 @@ function clearTerminalContents(): void {
   term.clear();
 }
 
-/**
- * @return {number} the currently selected baud rate
- */
-function getSelectedBaudRate(): number {
-  return Number.parseInt(baudRateSelector.value);
-}
+// /**
+//  * @return {number} the currently selected baud rate
+//  */
+// function getSelectedBaudRate(): number {
+//   return Number.parseInt(baudRateSelector.value);
+// }
 
-/**
- * @return {number} the currently selected data bit
- */
-function getSelectedDataBits():  7 | 8 {
-  return Number.parseInt(dataBitsSelector.value) === 7? 7 : 8;
-}
+// /**
+//  * @return {number} the currently selected data bit
+//  */
+// function getSelectedDataBits():  7 | 8 {
+//   return Number.parseInt(dataBitsSelector.value) === 7? 7 : 8;
+// }
 
-/**
- * @return {number} the currently selected data bit
- */
-function getSelectedStopBits(): 1 | 2 {
-  return Number.parseInt(stopBitsSelector.value) === 1? 1 : 2;
-}
+// /**
+//  * @return {number} the currently selected data bit
+//  */
+// function getSelectedStopBits(): 1 | 2 {
+//   return Number.parseInt(stopBitsSelector.value) === 1? 1 : 2;
+// }
 
 /**
  * Resets the UI back to the disconnected state.
@@ -91,13 +91,13 @@ function markDisconnected(): void {
   term.writeln('<DISCONNECTED>');
   portSelector.disabled = false;
   refreshButton.disabled = false;
-  connectButton.textContent = 'Connect';
+  connectButton.textContent = '连接设备';
   connectButton.disabled = false;
-  baudRateSelector.disabled = false;
-  dataBitsSelector.disabled = false;
-//   paritySelector.disabled = false;
-  stopBitsSelector.disabled = false;
-//   flowControlCheckbox.disabled = false;
+  // baudRateSelector.disabled = false;
+  // dataBitsSelector.disabled = false;
+  // paritySelector.disabled = false;
+  // stopBitsSelector.disabled = false;
+  // flowControlCheckbox.disabled = false;
   port = undefined;
 }
 
@@ -114,9 +114,9 @@ function getSelectedPort(): void{
       const selectedOption = portSelector.selectedOptions[0];
       port = new SerialPort({
           path: selectedOption.value,
-          baudRate: getSelectedBaudRate(),
-          dataBits: getSelectedDataBits(),
-          stopBits: getSelectedStopBits(),
+          baudRate: 115200,
+          dataBits: 8,
+          stopBits: 1,
           autoOpen: false
       });
     }
@@ -136,10 +136,10 @@ function connectToPort(): void {
   refreshButton.disabled = true;
   connectButton.textContent = 'Connecting...';
   connectButton.disabled = true;
-  baudRateSelector.disabled = true;
-  dataBitsSelector.disabled = true;
+  // baudRateSelector.disabled = true;
+  // dataBitsSelector.disabled = true;
   // paritySelector.disabled = true;
-  stopBitsSelector.disabled = true;
+  // stopBitsSelector.disabled = true;
   // flowControlCheckbox.disabled = true;
 
 
@@ -151,7 +151,7 @@ function connectToPort(): void {
       return;
     }
     term.writeln('<CONNECTED>');
-    connectButton.textContent = 'Disconnect';
+    connectButton.textContent = '断开连接';
     connectButton.disabled = false;
   })
 
@@ -251,10 +251,10 @@ export function setupSerial(): void {
     }
   });
 
-  baudRateSelector = document.getElementById('baudrate') as HTMLSelectElement;
-  dataBitsSelector = document.getElementById('databits') as HTMLSelectElement;
-//   paritySelector = document.getElementById('parity') as HTMLSelectElement;
-  stopBitsSelector = document.getElementById('stopbits') as HTMLSelectElement;
-//   flowControlCheckbox = document.getElementById('rtscts') as HTMLInputElement;
+  // baudRateSelector = document.getElementById('baudrate') as HTMLSelectElement;
+  // dataBitsSelector = document.getElementById('databits') as HTMLSelectElement;
+  // paritySelector = document.getElementById('parity') as HTMLSelectElement;
+  // stopBitsSelector = document.getElementById('stopbits') as HTMLSelectElement;
+  // flowControlCheckbox = document.getElementById('rtscts') as HTMLInputElement;
 
 }

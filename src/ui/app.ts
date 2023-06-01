@@ -273,7 +273,7 @@ function resizeMiddleSVG(): void {
     windowProperties.svgYOffset = yTranslate / ratio;
     windowProperties.svgTransformRatio = ratio;
 
-    document.getElementById("svg").setAttribute("transform", `translate(${xTranslate}, 0) scale(${ratio}, ${ratio})  `);
+    document.getElementById("svg").setAttribute("transform", `translate(${xTranslate}, ${yTranslate/2+20}) scale(${ratio}, ${ratio})  `);
 
     // Call crop position on each draggable to ensure it is within the new canvas boundary
     if (svgData.input != null) {
