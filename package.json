@@ -1,5 +1,5 @@
 {
-  "name": "ennui",
+  "name": "network_model_builder",
   "version": "0.1.0",
   "description": "Neural nework visualizer.",
   "main": "main.js",
