@@ -1,6 +1,5 @@
 import {Terminal} from 'xterm';
 import {FitAddon} from 'xterm-addon-fit';
-// import 'xterm/css/xterm.css';
 import { SerialPort } from 'serialport';
 
 
@@ -42,7 +41,7 @@ function downloadTerminalContents(): void {
       new Blob([new TextEncoder().encode(contents).buffer],
           {type: 'text/plain'}));
   const fauxLink = document.createElement('a');
-  fauxLink.download = `terminal_content_${new Date().getTime()}.txt`;
+  fauxLink.download = `terminal_content_${new Date().getTime()}.csv`;
   fauxLink.href = linkContent;
   fauxLink.click();
 }
