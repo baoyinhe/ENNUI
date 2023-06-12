@@ -40,17 +40,6 @@ tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras --
 
 ```
 
-# ENNUI
-ENNUI is an Elegant Neural Network User Interface that allows users to:
-- Build neural network architectures with a drag and drop interface.
-- Train those networks on the browser.
-- Visualize the training process.
-- Export to Python.
-
-Thanks to Gil Strang, it's hosted at [https://math.mit.edu/ENNUI/](https://math.mit.edu/ENNUI/)
-
-<img src="resources/ennui-resnet-train.png" width="600px"/>
-
 # Installation
 After cloning the repo, to install dependencies, run:
 `npm install`
