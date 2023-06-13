@@ -30,7 +30,7 @@ import { setupSerial } from './serial';
 import { loadDataUrl } from '../model/data';
 import { term } from './serial';
 
-var spawn = require("child_process").spawn;
+var execFile = require("child_process").execFile;
 
 
 export interface IDraggableData {
@@ -181,7 +181,14 @@ function setupIndividualOnClicks(): void {
     });
 
     document.getElementById("exportTflite").addEventListener("click", () => {
-        var result = spawn("cmd.exe", ["/s", "/c", "tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras D:/my-model.json D:/keras_model.h5 && tflite_convert --keras_model_file=D:/keras_model.h5 --output_file=D:/model.tflite"]);
+        // 调试版
+        // var path = process.cwd() + "\\dist\\tfliteExport\\tfliteExport.exe";
+
+        // 发布版
+        var path = process.cwd() + "\\resources\\app\\dist\\tfliteExport\\tfliteExport.exe";
+
+        var result = execFile(path, ["D:\\my-model.json"]);
+        // var result = spawn("cmd.exe", ["/s", "/c", "tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras D:/my-model.json D:/keras_model.h5 && tflite_convert --keras_model_file=D:/keras_model.h5 --output_file=D:/model.tflite"]);
         //输出正常情况下的控制台信息
         result.stdout.on("data", function (data: string) {
             term.writeln(data);

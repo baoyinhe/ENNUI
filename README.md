@@ -50,6 +50,15 @@ To Build the app, run:
 For Continuous Build and Integration, run:
 `npm run watch`
 
+To run the app:
+`npm run start`
+
+Package：
+`npm run package`
+
+注意：打包后需要手动把'xxd.exe'拷贝到out\network_model_builder-win32-x64目录下
+
+
 To use chrome with localhost and the CIFAR-10 Dataset, make sure to close
 all chrome windows and run the following command to launch chrome:
 'path/to/chrome.exe --allow-file-access-from-files'

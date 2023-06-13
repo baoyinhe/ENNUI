@@ -8,3 +8,5 @@ dist/*
 src/model/test.py
 prod/*
 .vscode/
+
+out/
