@@ -181,23 +181,29 @@ function setupIndividualOnClicks(): void {
     });
 
     document.getElementById("exportTflite").addEventListener("click", () => {
+        let fileObj = (document.getElementsByName("modelInput")[0] as any).files[0];
+        if (!fileObj) {
+            alert("请选择模型文件！")
+            return
+        }
+        let filePath = fileObj.path;
+
         // 调试版
-        // var path = process.cwd() + "\\dist\\tfliteExport\\tfliteExport.exe";
+        // var path = process.cwd() + "\\resources\\tfliteExport\\tfliteExport.exe";
 
         // 发布版
-        var path = process.cwd() + "\\resources\\app\\dist\\tfliteExport\\tfliteExport.exe";
+        var path = process.cwd() + "\\resources\\app\\resources\\tfliteExport\\tfliteExport.exe";
 
-        var result = execFile(path, ["D:\\my-model.json"]);
-        // var result = spawn("cmd.exe", ["/s", "/c", "tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras D:/my-model.json D:/keras_model.h5 && tflite_convert --keras_model_file=D:/keras_model.h5 --output_file=D:/model.tflite"]);
-        //输出正常情况下的控制台信息
+        var result = execFile(path, [filePath]);
+
         result.stdout.on("data", function (data: string) {
             term.writeln(data);
         });
-        //输出报错信息
+
         result.stderr.on("data", function (data: string) {
             term.writeln(`ERROR: ${data}`);
         });
-        //当程序执行完毕后的回调，那个code一般是0
+
         result.on("exit", function (code: any) {
             if (code === 0) {
                 confirm("导出成功！")

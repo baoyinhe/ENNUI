@@ -156,7 +156,6 @@ function connectToPort(): void {
 
   // Switches the port into "flowing mode"
   port.on('data', (data) => {
-    console.log('Data:', data)
     term.write(data);
   })
 

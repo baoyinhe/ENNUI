@@ -71,10 +71,12 @@ function csv_to_tensor(csvfile: string): tf.Tensor{
     }
     let numberArr = [] as number[];
       stringArr.forEach((line: string) => {
-      let dataArr = line.split(',');
-      dataArr.forEach((data: string) => {
-        numberArr.push(Number.parseFloat(data))
-      })
+        let dataArr = line.split(',');
+        if (dataArr.length === COLLECT_DATA_NUM) {
+          dataArr.forEach((data: string) => {
+            numberArr.push(Number.parseFloat(data))
+          })
+        }
       });
     return tf.tensor(numberArr);
   } catch (err: any){
@@ -105,7 +107,7 @@ function processs_data(data: tf.Tensor, v: Number): [trainX:tf.Tensor, trainY:tf
     
   }
   dataY = dataY.tile([sample_count]).reshape([sample_count, 4]);
-  let [trainY, testY] = tf.split(dataY, [sample_count * (1-VALIDDATAPORTION), sample_count * VALIDDATAPORTION], 0);
+  let [trainY, testY] = tf.split(dataY, [sample_count - validation_count, validation_count], 0);
   
   return [trainX, trainY, testX, testY];
 }
