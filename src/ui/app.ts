@@ -29,8 +29,9 @@ import { windowProperties } from "./window";
 import { setupSerial } from './serial';
 import { loadDataUrl } from '../model/data';
 import { term } from './serial';
+import * as path from 'path';
 
-var execFile = require("child_process").execFile;
+var spawn = require("child_process").spawn;
 
 
 export interface IDraggableData {
@@ -181,20 +182,27 @@ function setupIndividualOnClicks(): void {
     });
 
     document.getElementById("exportTflite").addEventListener("click", () => {
+        switchTab("datacollection");
+
         let fileObj = (document.getElementsByName("modelInput")[0] as any).files[0];
         if (!fileObj) {
             alert("请选择模型文件！")
             return
         }
-        let filePath = fileObj.path;
+        let modelPath = fileObj.path;
+        let dirName = path.dirname(modelPath);
+
+        // 模型转换流程：my-model.json -> keras_model.h5 -> model.tflite -> model.h
+        let kerasModelPath = dirName + '\\keras_model.h5';
+        let tflitePath = 'model.tflite';
 
         // 调试版
-        // var path = process.cwd() + "\\resources\\tfliteExport\\tfliteExport.exe";
+        var condaCmd = `conda activate tf && tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras ${modelPath} ${kerasModelPath} && tflite_convert --keras_model_file=${kerasModelPath} --output_file=${tflitePath} && .\\resources\\xxd.exe -i ${tflitePath} >> resources\\Arduino\\predict_gesture_mqtt\\model.h`
 
         // 发布版
-        var path = process.cwd() + "\\resources\\app\\resources\\tfliteExport\\tfliteExport.exe";
+        // var condaCmd = `conda activate tf && tensorflowjs_converter --input_format=tfjs_layers_model --output_format=keras ${modelPath} ${kerasModelPath} && tflite_convert --keras_model_file=${kerasModelPath} --output_file=${tflitePath} && .\\resources\\app\\resources\\xxd.exe -i ${tflitePath} >> resources\\app\\resources\\Arduino\\predict_gesture_mqtt\\model.h`
 
-        var result = execFile(path, [filePath]);
+        var result = spawn("cmd.exe", ["/s", "/c", condaCmd]);
 
         result.stdout.on("data", function (data: string) {
             term.writeln(data);

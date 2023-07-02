@@ -10,3 +10,4 @@ prod/*
 .vscode/
 
 out/
+*.tflite
